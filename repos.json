@@ -1,0 +1,22 @@
+{
+  "repos": [
+    {
+      "name": "isoquant_annotator",
+      "url": "https://github.com/Janek21/isoquant_annotator.git",
+      "branch": "main",
+      "description": "IsoQuant long-read assembly + annotation"
+    },
+    {
+      "name": "LyRic_annotator",
+      "url": "https://github.com/Janek21/LyRic_annotator.git",
+      "branch": "main",
+      "description": "LyRic wrapper; clones the LyRic engine (Janek21/LyRic_nonhuman) per run"
+    },
+    {
+      "name": "geneid-training",
+      "url": "https://github.com/Janek21/geneid-training.git",
+      "branch": "main",
+      "description": "geneid train, predict, and AGAT merge"
+    }
+  ]
+}

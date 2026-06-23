@@ -1,0 +1,902 @@
+---
+title: "Annotation Quality Evaluation"
+author: "Jan Izquierdo"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+    code_folding: hide
+    fig_width: 14
+    fig_height: 7
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+```{r libs}
+library(ggplot2)
+library(scales)
+library(patchwork)
+```
+
+---
+
+# Setup
+
+```{r constants}
+# ── Focal species ──────────────────────────────────────────────────────────────
+FOCAL <- c(
+  "Chlamydomonas reinhardtii",  # Archaeplastida  - control, good data
+  "Plasmodium falciparum 3D7",  # SAR/Apicomplexa - IsoQuant fails, merge rescues
+  "Leishmania donovani",         # Discoba         - divergent tool performance
+  #"Paramecium bursaria",         # SAR/Ciliata     - non-standard genetic code
+  "Symbiodinium kawagutii",
+  "Babesia duncani"              # SAR/Piroplasmida - geneid_merged > reference
+)
+
+# ── Pipeline factor levels (Reference = gold-standard target) ─────────────────
+PIPELINE_LEVELS <- c("IsoQuant", "LyRic (regular)", "LyRic (merged)",
+                     "Geneid (regular)", "Geneid (merged)", "Reference")
+
+# ── Colour palettes ────────────────────────────────────────────────────────────
+SP_COLS <- c(
+  "Chlamydomonas reinhardtii" = "#4E79A7",
+  "Plasmodium falciparum 3D7" = "#E15759",
+  "Leishmania donovani"       = "#59A14F",
+  "Symbiodinium kawagutii"       = "#F28E2B",
+  "Babesia duncani"           = "#B07AA1"
+)
+
+PL_COLS <- c(
+  "IsoQuant"         = "#BAB0AC",
+  "LyRic (regular)"  = "#F28E2B",
+  "LyRic (merged)"   = "#C94A4C",
+  "Geneid (regular)" = "#76B7B2",
+  "Geneid (merged)"  = "#2C7A4B",
+  "Reference"        = "#222222"
+)
+
+# ── Column name maps: pipeline label -> overview.tsv column ───────────────────
+BUSCO_LIN <- c(
+  "IsoQuant"         = "isoquant_lineage_busco",
+  "LyRic (regular)"  = "lyric_lineage_completeness_regular",
+  "LyRic (merged)"   = "lyric_lineage_completeness_merged",
+  "Geneid (regular)" = "geneid_regular_lyric_lineage_completeness",
+  "Geneid (merged)"  = "geneid_merged_lyric_lineage_completeness",
+  "Reference"        = "reference_prot_busco_custom_lineage"
+)
+
+BUSCO_EUK <- c(
+  "IsoQuant"         = "isoquant_eukaryote_busco",
+  "LyRic (regular)"  = "lyric_eukaryote_completeness_regular",
+  "LyRic (merged)"   = "lyric_eukaryote_completeness_merged",
+  "Geneid (regular)" = "geneid_regular_lyric_eukaryote_completeness",
+  "Geneid (merged)"  = "geneid_merged_lyric_eukaryote_completeness",
+  "Reference"        = "reference_prot_busco_eukaryote"
+)
+
+GENE_COUNT <- c(
+  "IsoQuant"         = "isoquant_gene_count",
+  "LyRic (regular)"  = "lyric_gene_count_regular",
+  "LyRic (merged)"   = "lyric_gene_count_merged",
+  "Geneid (regular)" = "geneid_regular_gene_count",
+  "Geneid (merged)"  = "geneid_merged_gene_count",
+  "Reference"        = "reference_gene_count"
+)
+
+GENE_DENS <- c(
+  "IsoQuant"         = "isoquant_gene_density_per_mb",
+  "LyRic (regular)"  = "lyric_gene_density_per_mb_regular",
+  "LyRic (merged)"   = "lyric_gene_density_per_mb_merged",
+  "Geneid (regular)" = "geneid_regular_gene_density_per_mb",
+  "Geneid (merged)"  = "geneid_merged_gene_density_per_mb",
+  "Reference"        = "reference_gene_density_per_mb"
+)
+
+IPG <- c(
+  "IsoQuant"         = "isoquant_isoforms_per_gene",
+  "LyRic (regular)"  = "lyric_isoforms_per_gene_regular",
+  "LyRic (merged)"   = "lyric_isoforms_per_gene_merged",
+  "Geneid (regular)" = "geneid_regular_isoforms_per_gene",
+  "Geneid (merged)"  = "geneid_merged_isoforms_per_gene",
+  "Reference"        = "reference_isoforms_per_gene"
+)
+
+COD_FRAC <- c(
+  "IsoQuant"        = "isoquant_coding_fraction",
+  "LyRic (regular)" = "lyric_coding_fraction_regular",
+  "LyRic (merged)"  = "lyric_coding_fraction_merged",
+  "Reference"       = "reference_coding_fraction"
+)
+
+TX_COUNT <- c(
+  "IsoQuant"         = "isoquant_transcript_count",
+  "LyRic (regular)"  = "lyric_transcript_count_regular",
+  "LyRic (merged)"   = "lyric_transcript_count_merged",
+  "Geneid (regular)" = "geneid_regular_transcript_count",
+  "Geneid (merged)"  = "geneid_merged_transcript_count",
+  "Reference"        = "reference_transcript_count"
+)
+```
+
+```{r theme}
+ptm <- theme_bw(base_size=16) +
+  theme(
+    text              = element_text(size=16, color="black"),
+    axis.text         = element_text(color="black"),
+    axis.text.x       = element_text(angle=35, hjust=1),
+    plot.title        = element_text(hjust=0.5, face="bold"),
+    axis.ticks        = element_line(color="black", linewidth=1.4),
+    panel.border      = element_rect(color="black", fill=NA, linewidth=2),
+    panel.grid.minor  = element_blank(),
+    panel.background  = element_rect(fill="transparent"),
+    plot.background   = element_rect(fill="transparent", color=NA),
+    strip.background  = element_rect(fill="transparent", color="black"),
+    strip.text        = element_text(face="bold", size=13),
+    legend.background = element_rect(fill="transparent", colour=NA),
+    legend.key        = element_rect(fill="transparent", colour=NA)
+  )
+
+save_plot <- function(p, name, w=14, h=7) {
+  ggsave(file.path("img", paste0(name, ".png")), p,
+         width=w, height=h, dpi=300, bg="transparent")
+}
+```
+
+```{r helpers}
+# Build long-format data from a named column map.
+# col_map: named character vector (name = pipeline label, value = column in df).
+# Returns one row per species x pipeline with value_col as the metric column.
+to_long <- function(dat, col_map, value_col) {
+  parts <- lapply(seq_along(col_map), function(i) {
+    col   <- col_map[[i]]
+    label <- names(col_map)[[i]]
+    if (!col %in% colnames(dat)) return(NULL)
+    out <- data.frame(species=as.character(dat$species),
+                      pipeline=label,
+                      stringsAsFactors=FALSE)
+    out[[value_col]] <- suppressWarnings(as.numeric(dat[[col]]))
+    out
+  })
+  long <- do.call(rbind, Filter(Negate(is.null), parts))
+  long$pipeline <- factor(long$pipeline, levels=PIPELINE_LEVELS)
+  long <- long[!is.na(long[[value_col]]), , drop=FALSE]
+  rownames(long) <- NULL
+  long
+}
+```
+
+```{r load-data}
+df <- read.delim("overview.tsv", sep="\t", check.names=FALSE,
+                 stringsAsFactors=FALSE, na.strings=c("NA","","nan","None"))
+
+focal <- df[df$species %in% FOCAL, ]
+stopifnot(nrow(focal) == 5)
+focal$species <- factor(focal$species, levels=FOCAL)
+
+df$is_focal <- df$species %in% FOCAL
+```
+
+---
+
+# 1. Dataset overview
+
+## 1.1 RNA-seq availability by supergroup
+
+```{r rnaseq-sg, fig.height=5}
+rna_type <- ifelse(is.na(df$rnaseq_data), "No RNA-seq",
+            ifelse(grepl("long", df$rnaseq_data) & grepl("short", df$rnaseq_data),
+                   "Short + long-read",
+            ifelse(grepl("long", df$rnaseq_data), "Long-read only", "Short-read only")))
+
+avail <- as.data.frame(table(supergroup=df$supergroup, rnaseq_type=rna_type),
+                       stringsAsFactors=FALSE)
+avail$rnaseq_type <- factor(avail$rnaseq_type,
+  levels=c("No RNA-seq","Short-read only","Long-read only","Short + long-read"))
+
+sg_order <- names(sort(tapply(avail$Freq, avail$supergroup, sum), decreasing=TRUE))
+avail$supergroup <- factor(avail$supergroup, levels=sg_order)
+
+p_avail <- ggplot(avail, aes(x=supergroup, y=Freq, fill=rnaseq_type)) +
+  geom_col(colour="black", linewidth=0.4) +
+  scale_fill_manual(
+    values=c("No RNA-seq"       ="#d9d9d9",
+             "Short-read only"  ="#6baed6",
+             "Long-read only"   ="#fd8d3c",
+             "Short + long-read"="#31a354"),
+    name=NULL) +
+  labs(x=NULL, y="Species count",
+       title="RNA-seq availability across protist supergroups") +
+  ptm +
+  theme(legend.position="top")
+
+p_avail
+save_plot(p_avail, "01_rnaseq_availability", w=10, h=6)
+```
+
+## 1.2 Pipeline coverage
+
+```{r coverage, fig.height=10}
+has_iso  <- !is.na(df$isoquant_gene_count)
+has_lr   <- !is.na(df$lyric_gene_count_regular)
+has_lm   <- !is.na(df$lyric_gene_count_merged)
+has_gr   <- !is.na(df$geneid_regular_gene_count)
+has_gm   <- !is.na(df$geneid_merged_gene_count)
+
+any_data <- has_iso | has_lr | has_lm | has_gr | has_gm
+sub      <- df[any_data, c("species","supergroup")]
+
+cov_long <- rbind(
+  data.frame(sub, pipeline="IsoQuant",         has_data=has_iso[any_data]),
+  data.frame(sub, pipeline="LyRic (regular)",  has_data=has_lr[any_data]),
+  data.frame(sub, pipeline="LyRic (merged)",   has_data=has_lm[any_data]),
+  data.frame(sub, pipeline="Geneid (regular)", has_data=has_gr[any_data]),
+  data.frame(sub, pipeline="Geneid (merged)",  has_data=has_gm[any_data])
+)
+cov_long$pipeline <- factor(cov_long$pipeline, levels=PIPELINE_LEVELS)
+
+# Order species by supergroup then total pipelines available
+n_pip <- tapply(cov_long$has_data, cov_long$species, sum)
+sg_sp <- unique(cov_long[, c("species","supergroup")])
+sg_sp <- sg_sp[order(sg_sp$supergroup, -n_pip[sg_sp$species]), ]
+cov_long$species <- factor(cov_long$species, levels=rev(sg_sp$species))
+
+p_cov <- ggplot(cov_long, aes(x=pipeline, y=species, fill=has_data)) +
+  geom_tile(colour="white", linewidth=0.6) +
+  scale_fill_manual(values=c("TRUE"="#2C7A4B","FALSE"="#f0f0f0"),
+                    labels=c("TRUE"="Available","FALSE"="Missing"),
+                    name=NULL) +
+  labs(x=NULL, y=NULL, title="Pipeline output availability per species") +
+  ptm +
+  theme(axis.text.y=element_text(size=7),
+        legend.position="top")
+
+p_cov
+save_plot(p_cov, "02_pipeline_coverage", w=8, h=16)
+```
+
+---
+
+# 2. Focal species - BUSCO completeness
+
+## 2.1 Lineage BUSCO progression
+
+```{r busco-lin, fig.height=6}
+lin_long <- to_long(focal, BUSCO_LIN, "busco")
+lin_long$species <- factor(lin_long$species, levels=FOCAL)
+
+p_lin <- ggplot(lin_long, aes(x=pipeline, y=busco, colour=species, group=species)) +
+  annotate("rect", xmin=5.5, xmax=6.5, ymin=-Inf, ymax=Inf,
+           fill="grey92", alpha=0.8) +
+  geom_line(data=lin_long[lin_long$pipeline != "Reference", ],
+            linewidth=1.3) +
+  geom_point(size=3.5, shape=21, fill="white", stroke=1.5) +
+  geom_point(data=lin_long[lin_long$pipeline == "Reference", ],
+             size=5, shape=18) +
+  geom_text(aes(label=round(busco, 1)), vjust=-1.1, size=3,
+            show.legend=FALSE) +
+  geom_hline(yintercept=50, linetype="dashed", colour="grey60") +
+  scale_colour_manual(values=SP_COLS, name=NULL) +
+  scale_y_continuous(limits=c(0,108), breaks=seq(0,100,25)) +
+  labs(x=NULL, y="Lineage BUSCO (%)",
+       title="Lineage BUSCO completeness across pipeline stages",
+       caption="Shaded column = reference annotation (protein mode). Geneid evaluated with LyRic-identified lineage.") +
+  ptm +
+  theme(legend.position="right")
+
+p_lin
+save_plot(p_lin, "03_busco_lineage_progression", w=12, h=6)
+```
+
+## 2.2 Eukaryote BUSCO progression
+
+```{r busco-euk, fig.height=6}
+euk_long <- to_long(focal, BUSCO_EUK, "busco")
+euk_long$species <- factor(euk_long$species, levels=FOCAL)
+
+p_euk <- ggplot(euk_long, aes(x=pipeline, y=busco, colour=species, group=species)) +
+  annotate("rect", xmin=5.5, xmax=6.5, ymin=-Inf, ymax=Inf,
+           fill="grey92", alpha=0.8) +
+  geom_line(data=euk_long[euk_long$pipeline != "Reference", ],
+            linewidth=1.3) +
+  geom_point(size=3.5, shape=21, fill="white", stroke=1.5) +
+  geom_point(data=euk_long[euk_long$pipeline == "Reference", ],
+             size=5, shape=18) +
+  geom_text(aes(label=round(busco, 1)), vjust=-1.1, size=3,
+            show.legend=FALSE) +
+  geom_hline(yintercept=50, linetype="dashed", colour="grey60") +
+  scale_colour_manual(values=SP_COLS, name=NULL) +
+  scale_y_continuous(limits=c(0,108), breaks=seq(0,100,25)) +
+  labs(x=NULL, y="Eukaryote BUSCO (%)",
+       title="Eukaryote BUSCO completeness across pipeline stages",
+       caption="Eukaryote BUSCO is lower for divergent lineages (Discoba, ciliates) - compare same species across pipelines, not across species.") +
+  ptm +
+  theme(legend.position="right")
+
+p_euk
+save_plot(p_euk, "04_busco_eukaryote_progression", w=12, h=6)
+```
+
+## 2.3 BUSCO heatmap - focal species
+
+```{r busco-heat, fig.height=5}
+lin_long$db  <- "Lineage"
+euk_long$db  <- "Eukaryote"
+heat_focal   <- rbind(lin_long, euk_long)
+heat_focal$db <- factor(heat_focal$db, levels=c("Lineage","Eukaryote"))
+heat_focal$species <- factor(heat_focal$species, levels=rev(FOCAL))
+
+p_heat <- ggplot(heat_focal, aes(x=pipeline, y=species, fill=busco)) +
+  geom_tile(colour="white", linewidth=0.8) +
+  geom_text(aes(label=ifelse(is.na(busco), "-", sprintf("%.1f", busco))),
+            size=3.2) +
+  facet_wrap(~db) +
+  scale_fill_gradientn(
+    colours  = c("#d73027","#fee08b","#1a9850"),
+    values   = c(0, 0.5, 1),
+    limits   = c(0, 100),
+    na.value = "grey88",
+    name     = "BUSCO (%)") +
+  labs(x=NULL, y=NULL, title="BUSCO completeness") +
+  ptm +
+  theme(panel.grid=element_blank(),
+        axis.text.x=element_text(angle=30, hjust=1),
+        legend.position="right")
+
+p_heat
+save_plot(p_heat, "05_busco_heatmap_focal", w=14, h=5)
+```
+
+## 2.4 BUSCO bars per species (lineage)
+
+```{r busco-bars, fig.height=6, results='asis'}
+for (sp in FOCAL) {
+  d <- lin_long[lin_long$species == sp, ]
+  cat(sprintf("\n\n### %s\n\n", sp))
+
+  p <- ggplot(d, aes(x=busco, y=reorder(pipeline, busco), fill=pipeline)) +
+    geom_vline(xintercept=50, linetype="dashed", colour="grey60", linewidth=1) +
+    geom_col(colour="black", linewidth=0.5, width=0.7) +
+    geom_text(aes(label=round(busco, 1)), hjust=-0.2, size=4.5, colour="grey20") +
+    scale_x_continuous(limits=c(0,115), breaks=seq(0,100,25)) +
+    scale_fill_manual(values=PL_COLS, guide="none") +
+    labs(x="Lineage BUSCO (%)", y=NULL, title=sp) +
+    ptm +
+    theme(axis.text.x=element_text(angle=0, hjust=0.5))
+
+  fname <- gsub("[^A-Za-z0-9]", "_", sp)
+  save_plot(p, paste0("06_busco_bars_", fname), w=8, h=4)
+  print(p)
+}
+```
+
+---
+
+# 3. Focal species - Gene model counts
+
+## 3.1 Gene count ratio to reference
+
+Gene count divided by the reference gene count for each species.
+The reference bar is always at 1.0x by definition.
+
+```{r gene-ratio, fig.height=6}
+gc_long <- to_long(focal, GENE_COUNT, "genes")
+gc_long$species <- factor(gc_long$species, levels=FOCAL)
+
+ref_gc      <- setNames(suppressWarnings(as.numeric(focal$reference_gene_count)),
+                        as.character(focal$species))
+gc_long$ref <- ref_gc[as.character(gc_long$species)]
+gc_long$ratio <- gc_long$genes / gc_long$ref
+
+p_ratio <- ggplot(gc_long, aes(x=pipeline, y=ratio, fill=pipeline)) +
+  geom_col(colour="black", linewidth=0.4, width=0.7) +
+  geom_hline(yintercept=1, linetype="dashed", colour="black", linewidth=1) +
+  geom_text(aes(label=sprintf("%.2fx", ratio)), vjust=-0.4, size=3) +
+  scale_fill_manual(values=PL_COLS, guide="none") +
+  scale_y_continuous(limits=c(0, 3.6), breaks=c(0, 0.5, 1, 1.5, 2, 2.5, 3)) +
+  facet_wrap(~species, nrow=1) +
+  labs(x=NULL, y="Gene count / reference gene count",
+       title="Predicted gene count relative to reference annotation",
+       caption="Dashed line = reference (1.0x). Reference bar is always 1.0 by construction.") +
+  ptm
+
+p_ratio
+save_plot(p_ratio, "07_gene_count_ratio", w=16, h=6)
+```
+
+## 3.2 Absolute gene counts
+
+```{r gene-abs, fig.height=6}
+p_abs <- ggplot(gc_long, aes(x=pipeline, y=genes, fill=pipeline)) +
+  geom_col(colour="black", linewidth=0.4, width=0.7) +
+  geom_text(aes(label=label_comma()(genes)), vjust=-0.4, size=2.8) +
+  scale_fill_manual(values=PL_COLS, guide="none") +
+  scale_y_log10(labels=label_comma()) +
+  facet_wrap(~species, nrow=1, scales="free_y") +
+  labs(x=NULL, y="Gene count (log₁₀ scale)",
+       title="Absolute gene counts per pipeline") +
+  ptm
+
+p_abs
+save_plot(p_abs, "08_gene_counts_absolute", w=16, h=6)
+```
+
+## 3.3 Gene density per Mb
+
+```{r gene-density, fig.height=6}
+dens_long <- to_long(focal, GENE_DENS, "density")
+dens_long$species <- factor(dens_long$species, levels=FOCAL)
+
+p_dens <- ggplot(dens_long, aes(x=pipeline, y=density, fill=pipeline)) +
+  geom_col(colour="black", linewidth=0.4, width=0.7) +
+  geom_text(aes(label=round(density, 0)), vjust=-0.4, size=3) +
+  scale_fill_manual(values=PL_COLS, guide="none") +
+  facet_wrap(~species, nrow=1, scales="free_y") +
+  labs(x=NULL, y="Genes per Mb",
+       title="Gene density per Mb") +
+  ptm
+
+p_dens
+save_plot(p_dens, "09_gene_density", w=16, h=6)
+```
+
+---
+
+# 4. Focal species - Annotation structure
+
+## 4.1 Isoforms per gene
+
+```{r isoforms, fig.height=6}
+ipg_long <- to_long(focal, IPG, "ipg")
+ipg_long$species <- factor(ipg_long$species, levels=FOCAL)
+
+p_ipg <- ggplot(ipg_long, aes(x=pipeline, y=ipg, fill=pipeline)) +
+  geom_col(colour="black", linewidth=0.4, width=0.7) +
+  geom_hline(yintercept=1, linetype="dotted", colour="grey50") +
+  geom_text(aes(label=sprintf("%.2f", ipg)), vjust=-0.4, size=3) +
+  scale_fill_manual(values=PL_COLS, guide="none") +
+  scale_y_continuous(limits=c(0, 6.2)) +
+  facet_wrap(~species, nrow=1) +
+  labs(x=NULL, y="Transcripts / gene",
+       title="Isoforms per gene across stages") +
+  ptm
+
+p_ipg
+save_plot(p_ipg, "10_isoforms_per_gene", w=16, h=6)
+```
+
+## 4.2 Coding fraction
+
+Coding fraction = coding transcripts / all transcripts in the transcriptome.
+Available for IsoQuant, LyRic and Reference; Geneid is ab-initio and does not
+independently call ORFs.
+
+```{r coding-frac, fig.height=6}
+cf_long <- to_long(focal, COD_FRAC, "cf")
+cf_long$species <- factor(cf_long$species, levels=FOCAL)
+
+p_cf <- ggplot(cf_long, aes(x=pipeline, y=cf, fill=pipeline)) +
+  geom_col(colour="black", linewidth=0.4, width=0.6) +
+  geom_text(aes(label=sprintf("%.3f", cf)), vjust=-0.4, size=3.2) +
+  scale_fill_manual(values=PL_COLS, guide="none") +
+  scale_y_continuous(limits=c(0, 1.12), labels=label_percent()) +
+  facet_wrap(~species, nrow=1) +
+  labs(x=NULL, y="Coding transcripts / all transcripts",
+       title="Coding fraction - proportion of transcripts that are protein-coding",
+       caption="High coding fraction = precise but may miss non-coding features.\nIsoQuant ~0.97 vs LyRic ~0.73–0.91 illustrates the precision-recall tradeoff.") +
+  ptm +
+  theme(axis.text.x=element_text(angle=25, hjust=1))
+
+p_cf
+save_plot(p_cf, "11_coding_fraction", w=14, h=6)
+```
+
+## 4.3 Transcript counts
+
+```{r tx-counts, fig.height=6}
+tx_long <- to_long(focal, TX_COUNT, "tx")
+tx_long$species <- factor(tx_long$species, levels=FOCAL)
+
+p_tx <- ggplot(tx_long, aes(x=pipeline, y=tx, fill=pipeline)) +
+  geom_col(colour="black", linewidth=0.4, width=0.7) +
+  geom_text(aes(label=label_comma()(tx)), vjust=-0.4, size=2.8) +
+  scale_fill_manual(values=PL_COLS, guide="none") +
+  scale_y_log10(labels=label_comma()) +
+  facet_wrap(~species, nrow=1, scales="free_y") +
+  labs(x=NULL, y="Transcript count (log₁₀ scale)",
+       title="Total transcript count per pipeline") +
+  ptm
+
+p_tx
+save_plot(p_tx, "12_transcript_counts", w=16, h=6)
+```
+
+---
+
+# 5. Special case - Symbiodinium: genetic code effect
+
+Ciliates recode TGA and TAA stop codons as sense amino acids.
+Genome-mode BUSCO applies the standard genetic code and therefore misreads those
+positions as stop codons, producing an artificially low completeness score.
+Protein-mode BUSCO operates on existing protein sequences and is unaffected.
+The 4.3x gap between reference genome-mode (17.1%) and protein-mode (73.1%)
+BUSCO demonstrates that genome-mode scores are uninformative for ciliates.
+
+```{r paramecium, fig.height=5}
+pam <- df[df$species == "Symbiodinium kawagutii", ]
+
+pam_d <- data.frame(
+  evaluation = c("Reference\n(genome)", "Reference\n(protein)",
+                 "IsoQuant", "LyRic\n(regular)", "LyRic\n(merged)",
+                 "Geneid\n(regular)", "Geneid\n(merged)"),
+  mode = c("genome","protein","protein","protein","protein","protein","protein"),
+  lineage  = c(as.numeric(pam$reference_gen_busco_custom_lineage),
+               as.numeric(pam$reference_prot_busco_custom_lineage),
+               as.numeric(pam$isoquant_lineage_busco),
+               as.numeric(pam$lyric_lineage_completeness_regular),
+               as.numeric(pam$lyric_lineage_completeness_merged),
+               as.numeric(pam$geneid_regular_lyric_lineage_completeness),
+               as.numeric(pam$geneid_merged_lyric_lineage_completeness)),
+  eukaryote = c(as.numeric(pam$reference_gen_busco_eukaryote),
+                as.numeric(pam$reference_prot_busco_eukaryote),
+                as.numeric(pam$isoquant_eukaryote_busco),
+                as.numeric(pam$lyric_eukaryote_completeness_regular),
+                as.numeric(pam$lyric_eukaryote_completeness_merged),
+                as.numeric(pam$geneid_regular_lyric_eukaryote_completeness),
+                as.numeric(pam$geneid_merged_lyric_eukaryote_completeness)),
+  stringsAsFactors=FALSE
+)
+pam_d$evaluation <- factor(pam_d$evaluation, levels=pam_d$evaluation)
+
+pam_lin <- data.frame(pam_d[, c("evaluation","mode","lineage")],
+                      db="Ciliophora lineage")
+pam_euk <- data.frame(pam_d[, c("evaluation","mode","eukaryote")],
+                      db="Eukaryote")
+names(pam_lin)[3] <- "busco"
+names(pam_euk)[3] <- "busco"
+pam_long <- rbind(pam_lin, pam_euk)
+pam_long$db <- factor(pam_long$db, levels=c("Ciliophora lineage","Eukaryote"))
+
+p_pam <- ggplot(pam_long, aes(x=evaluation, y=busco, fill=mode)) +
+  geom_col(colour="black", linewidth=0.4, width=0.7,
+           position=position_dodge(width=0.8)) +
+  geom_text(aes(label=round(busco, 1)),
+            position=position_dodge(width=0.8), vjust=-0.5, size=3.2) +
+  geom_vline(xintercept=2.5, linetype="dashed", colour="grey50") +
+  scale_fill_manual(values=c("genome"="#E15759","protein"="#4E79A7"),
+                    name="BUSCO mode") +
+  scale_y_continuous(limits=c(0,110)) +
+  facet_wrap(~db) +
+  labs(x=NULL, y="BUSCO completeness (%)",
+       title=" genetic code effect",
+       subtitle="Reference genome BUSCO 17.1% vs protein BUSCO 73.1%: 4.3x gap caused by non-standard genetic code (TGA/TAA -> Gln)",
+       caption="Vertical dashed line separates reference annotation from pipeline outputs.") +
+  ptm +
+  theme(axis.text.x=element_text(angle=25, hjust=1),
+        legend.position="top")
+
+p_pam
+save_plot(p_pam, "13_paramecium_genetic_code", w=13, h=6)
+```
+
+---
+
+# 6. All-species context
+
+## 6.1 BUSCO completeness heatmap - all complete species
+
+```{r busco-all, fig.height=11}
+complete_spp <- df$species[
+  !is.na(df$isoquant_gene_count) &
+  !is.na(df$lyric_gene_count_merged) &
+  !is.na(df$geneid_merged_gene_count)]
+
+hall <- df[df$species %in% complete_spp, ]
+
+busco_cols_all <- c(BUSCO_LIN["IsoQuant"], BUSCO_LIN["LyRic (regular)"],
+                    BUSCO_LIN["LyRic (merged)"], BUSCO_LIN["Geneid (regular)"],
+                    BUSCO_LIN["Geneid (merged)"], BUSCO_LIN["Reference"])
+
+hall_long <- to_long(hall, busco_cols_all, "busco")
+
+# Order species by supergroup then name
+sg_ord <- df[df$species %in% complete_spp, c("species","supergroup")]
+sg_ord <- sg_ord[order(sg_ord$supergroup, sg_ord$species), ]
+hall_long$species <- factor(hall_long$species, levels=rev(sg_ord$species))
+
+p_hall <- ggplot(hall_long, aes(x=pipeline, y=species, fill=busco)) +
+  geom_tile(colour="white", linewidth=0.5) +
+  geom_text(aes(label=ifelse(is.na(busco),"-", sprintf("%.0f", busco))),
+            size=2.6) +
+  scale_fill_gradientn(colours=c("#d73027","#fee08b","#1a9850"),
+                       values=c(0,0.5,1), limits=c(0,100),
+                       na.value="grey90", name="Lineage\nBUSCO (%)") +
+  labs(x=NULL, y=NULL,
+       title="Lineage BUSCO - complete pipeline output") +
+  ptm +
+  theme(axis.text.x=element_text(angle=25, hjust=1),
+        axis.text.y=element_text(size=8),
+        panel.grid=element_blank())
+
+p_hall
+save_plot(p_hall, "14_busco_heatmap_all", w=11, h=13)
+```
+
+## 6.2 LyRic merge gain
+
+```{r lyric-gain, fig.height=5}
+lr_r <- suppressWarnings(as.numeric(df$lyric_lineage_completeness_regular))
+lr_m <- suppressWarnings(as.numeric(df$lyric_lineage_completeness_merged))
+ok   <- !is.na(lr_r) & !is.na(lr_m)
+
+lg <- data.frame(
+  species  = df$species[ok],
+  delta    = lr_m[ok] - lr_r[ok],
+  is_focal = df$is_focal[ok],
+  stringsAsFactors=FALSE
+)
+lg <- lg[order(lg$delta), ]
+lg$species <- factor(lg$species, levels=lg$species)
+
+p_lg <- ggplot(lg, aes(x=species, y=delta, fill=is_focal)) +
+  geom_col(colour="black", linewidth=0.3, width=0.8) +
+  geom_hline(yintercept=0, colour="black") +
+  scale_fill_manual(values=c("TRUE"="#E15759","FALSE"="#4E79A7"), guide="none") +
+  scale_y_continuous(breaks=seq(-20,100,20)) +
+  labs(x=NULL, y="BUSCO gain (merged - regular, %)",
+       title="LyRic: lineage BUSCO gain from merging with reference annotation",
+       subtitle=sprintf("n=%d  |  mean=+%.1f%%  |  range: %+.1f%% to %+.1f%%",
+                        nrow(lg), mean(lg$delta), min(lg$delta), max(lg$delta)),
+       caption="Red bars = focal species. Sorted by gain.") +
+  ptm +
+  theme(axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+p_lg
+save_plot(p_lg, "15_lyric_merge_gain", w=13, h=6)
+```
+
+## 6.3 Geneid merge gain
+
+```{r geneid-gain, fig.height=5}
+gd_r <- suppressWarnings(as.numeric(df$geneid_regular_lyric_lineage_completeness))
+gd_m <- suppressWarnings(as.numeric(df$geneid_merged_lyric_lineage_completeness))
+ok2  <- !is.na(gd_r) & !is.na(gd_m)
+
+gg <- data.frame(
+  species  = df$species[ok2],
+  delta    = gd_m[ok2] - gd_r[ok2],
+  is_focal = df$is_focal[ok2],
+  stringsAsFactors=FALSE
+)
+gg <- gg[order(gg$delta), ]
+gg$species <- factor(gg$species, levels=gg$species)
+
+p_gg <- ggplot(gg, aes(x=species, y=delta, fill=is_focal)) +
+  geom_col(colour="black", linewidth=0.3, width=0.8) +
+  geom_hline(yintercept=0, colour="black") +
+  scale_fill_manual(values=c("TRUE"="#E15759","FALSE"="#2C7A4B"), guide="none") +
+  scale_y_continuous(breaks=seq(-20,100,20)) +
+  labs(x=NULL, y="BUSCO gain (merged - regular, %)",
+       title="Geneid: lineage BUSCO gain from merging with transcriptome annotation",
+       subtitle=sprintf("n=%d  |  mean=+%.1f%%  |  range: %+.1f%% to %+.1f%%",
+                        nrow(gg), mean(gg$delta), min(gg$delta), max(gg$delta)),
+       caption="Red bars = focal species. Sorted by gain.") +
+  ptm +
+  theme(axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+p_gg
+save_plot(p_gg, "16_geneid_merge_gain", w=13, h=6)
+```
+
+## 6.4 Gene count calibration - distribution by pipeline
+
+Ratio = observed gene count / reference coding transcript count.
+Includes a Reference distribution for species that have reference gene count data.
+
+```{r ratio-dist, fig.height=6}
+ref_ct <- suppressWarnings(as.numeric(df$reference_coding_transcripts))
+
+make_ratio_col <- function(col_name) {
+  vals <- suppressWarnings(as.numeric(df[[col_name]]))
+  ok <- !is.na(vals) & !is.na(ref_ct) & ref_ct > 0
+  data.frame(species=df$species[ok], pipeline=col_name,
+             ratio=vals[ok]/ref_ct[ok], is_focal=df$is_focal[ok],
+             stringsAsFactors=FALSE)
+}
+
+ratio_dist <- rbind(
+  make_ratio_col("isoquant_gene_count"),
+  make_ratio_col("lyric_gene_count_regular"),
+  make_ratio_col("lyric_gene_count_merged"),
+  make_ratio_col("geneid_regular_gene_count"),
+  make_ratio_col("geneid_merged_gene_count"),
+  make_ratio_col("reference_gene_count")
+)
+
+pl_labels <- c(
+  "isoquant_gene_count"          = "IsoQuant",
+  "lyric_gene_count_regular"     = "LyRic (regular)",
+  "lyric_gene_count_merged"      = "LyRic (merged)",
+  "geneid_regular_gene_count"    = "Geneid (regular)",
+  "geneid_merged_gene_count"     = "Geneid (merged)",
+  "reference_gene_count"         = "Reference"
+)
+ratio_dist$pipeline <- factor(pl_labels[ratio_dist$pipeline],
+                               levels=PIPELINE_LEVELS)
+
+p_rdist <- ggplot(ratio_dist, aes(x=pipeline, y=ratio, fill=pipeline)) +
+  geom_boxplot(outlier.shape=21, outlier.size=2, colour="black",
+               linewidth=0.5, width=0.55) +
+  geom_jitter(aes(colour=pipeline), width=0.12, size=1.5, alpha=0.5) +
+  geom_hline(yintercept=1, linetype="dashed", colour="black", linewidth=1) +
+  scale_fill_manual(values=PL_COLS, guide="none") +
+  scale_colour_manual(values=PL_COLS, guide="none") +
+  scale_y_log10(breaks=c(0.01,0.05,0.1,0.5,1,2,3,5),
+                labels=label_number()) +
+  labs(x=NULL, y="Genes predicted / reference coding transcripts (log scale)",
+       title="Gene count calibration across all species with reference data",
+       caption="Dashed line = 1x (expected). Each point is one species. Reference distribution is reference_gene_count / reference_coding_transcripts.") +
+  ptm +
+  theme(axis.text.x=element_text(angle=25, hjust=1))
+
+p_rdist
+save_plot(p_rdist, "17_gene_ratio_distribution", w=11, h=6)
+```
+
+## 6.5 Gene count vs BUSCO - completeness vs calibration scatter
+
+```{r scatter, fig.height=10}
+make_scatter_source <- function(gene_col, busco_col, label) {
+  genes <- suppressWarnings(as.numeric(df[[gene_col]]))
+  busco <- suppressWarnings(as.numeric(df[[busco_col]]))
+  ref   <- suppressWarnings(as.numeric(df$reference_coding_transcripts))
+  ok    <- !is.na(genes) & !is.na(busco) & !is.na(ref) & ref > 0
+  data.frame(
+    species  = df$species[ok],
+    pipeline = label,
+    ratio    = genes[ok] / ref[ok],
+    busco    = busco[ok],
+    is_focal = df$is_focal[ok],
+    stringsAsFactors=FALSE
+  )
+}
+
+scatter <- rbind(
+  make_scatter_source("isoquant_gene_count",       "isoquant_lineage_busco",                      "IsoQuant"),
+  make_scatter_source("lyric_gene_count_regular",  "lyric_lineage_completeness_regular",           "LyRic (regular)"),
+  make_scatter_source("lyric_gene_count_merged",   "lyric_lineage_completeness_merged",            "LyRic (merged)"),
+  make_scatter_source("geneid_regular_gene_count", "geneid_regular_lyric_lineage_completeness",    "Geneid (regular)"),
+  make_scatter_source("geneid_merged_gene_count",  "geneid_merged_lyric_lineage_completeness",     "Geneid (merged)"),
+  make_scatter_source("reference_gene_count",      "reference_prot_busco_custom_lineage",          "Reference")
+)
+scatter$pipeline <- factor(scatter$pipeline, levels=PIPELINE_LEVELS)
+
+p_scatter <- ggplot(scatter, aes(x=ratio, y=busco, colour=pipeline)) +
+  geom_vline(xintercept=1, linetype="dashed", colour="grey50") +
+  geom_point(data=scatter[!scatter$is_focal, ], alpha=0.5, size=2) +
+  geom_point(data=scatter[scatter$is_focal, ],  size=4.5, shape=21,
+             stroke=1.5, aes(fill=pipeline), colour="black") +
+  scale_colour_manual(values=PL_COLS, name="Pipeline") +
+  scale_fill_manual(values=PL_COLS, guide="none") +
+  scale_x_log10(breaks=c(0.01,0.1,0.5,1,2,5),
+                labels=label_number()) +
+  scale_y_continuous(limits=c(0,105), breaks=seq(0,100,25)) +
+  facet_wrap(~pipeline, nrow=2, ncol=3) +
+  labs(x="Gene count / reference coding transcripts (log scale)",
+       y="Lineage BUSCO (%)",
+       title="Gene count calibration vs annotation completeness",
+       caption="Dashed vertical line = 1x expected gene count. Large points = focal species.\nHigh BUSCO + high ratio indicates over-annotation rather than genuine quality improvement.") +
+  ptm +
+  theme(legend.position="none",
+        axis.text.x=element_text(angle=30, hjust=1))
+
+p_scatter
+save_plot(p_scatter, "18_gene_busco_scatter", w=12, h=10)
+```
+
+## 6.6 Annotation precision vs completeness - coding fraction vs BUSCO
+
+Coding fraction (proportion of transcripts that are protein-coding) measures
+precision; BUSCO measures completeness/recall.
+High coding fraction + low BUSCO = precise but incomplete.
+Low coding fraction + high BUSCO = complete but noisy.
+
+```{r busco-codfrac, fig.height=8}
+cf_pips <- names(COD_FRAC)   # IsoQuant, LyRic (regular), LyRic (merged), Reference
+
+blong_cf <- to_long(df, BUSCO_LIN[cf_pips], "busco")
+cflong   <- to_long(df, COD_FRAC, "cf")
+cf_bi    <- merge(blong_cf, cflong, by=c("species","pipeline"))
+cf_bi$is_focal   <- cf_bi$species %in% FOCAL
+cf_bi$sp_short   <- sub(" .*", "", cf_bi$species)   # first word for labels
+
+p_cf_busco <- ggplot(cf_bi, aes(x=cf, y=busco, colour=pipeline)) +
+  geom_point(data=cf_bi[!cf_bi$is_focal, ], alpha=0.45, size=2.2) +
+  geom_point(data=cf_bi[cf_bi$is_focal, ],  size=5, shape=21,
+             stroke=1.6, aes(fill=pipeline), colour="black") +
+  geom_text(data=cf_bi[cf_bi$is_focal, ],
+            aes(label=sp_short), vjust=-0.9, size=2.9, show.legend=FALSE) +
+  scale_colour_manual(values=PL_COLS[cf_pips], guide="none") +
+  scale_fill_manual(values=PL_COLS[cf_pips], guide="none") +
+  scale_x_continuous(labels=label_percent(accuracy=1), breaks=seq(0,1,0.2),
+                     limits=c(0,1.05)) +
+  scale_y_continuous(limits=c(0,105), breaks=seq(0,100,25)) +
+  facet_wrap(~pipeline, nrow=2, ncol=2) +
+  labs(x="Coding fraction (protein-coding transcripts / all transcripts)",
+       y="Lineage BUSCO (%)",
+       title="Precision vs completeness: coding fraction vs lineage BUSCO",
+       caption="Large points = focal species (first word of name). Top-right = precise and complete.") +
+  ptm +
+  theme(axis.text.x=element_text(angle=0, hjust=0.5))
+
+p_cf_busco
+save_plot(p_cf_busco, "19_busco_vs_coding_fraction", w=11, h=9)
+```
+
+## 6.7 BUSCO change vs gene count change relative to reference - focal species
+
+Both axes are relative to the reference annotation for each species, so the
+reference is always at the origin (0 pp, 1x).
+Points in the upper half gained BUSCO completeness versus the reference;
+points left of the dashed line predicted fewer genes.
+
+```{r busco-gc-delta, fig.height=7}
+busco_foc <- to_long(focal, BUSCO_LIN, "busco")
+gc_foc    <- to_long(focal, GENE_COUNT, "genes")
+both_foc  <- merge(busco_foc, gc_foc, by=c("species","pipeline"))
+
+ref_busco_v <- setNames(
+  suppressWarnings(as.numeric(focal$reference_prot_busco_custom_lineage)),
+  as.character(focal$species))
+ref_gc_v <- setNames(
+  suppressWarnings(as.numeric(focal$reference_gene_count)),
+  as.character(focal$species))
+
+both_foc$delta_busco <- both_foc$busco  - ref_busco_v[as.character(both_foc$species)]
+both_foc$gc_ratio    <- both_foc$genes  / ref_gc_v[as.character(both_foc$species)]
+both_foc <- both_foc[both_foc$pipeline != "Reference", ]
+both_foc$species  <- factor(both_foc$species, levels=FOCAL)
+both_foc$pipeline <- droplevels(both_foc$pipeline)
+
+pl_shapes <- c("IsoQuant"=16, "LyRic (regular)"=15, "LyRic (merged)"=17,
+               "Geneid (regular)"=18, "Geneid (merged)"=8)
+
+p_delta <- ggplot(both_foc, aes(x=gc_ratio, y=delta_busco,
+                                colour=species, shape=pipeline)) +
+  geom_vline(xintercept=1, linetype="dashed", colour="grey55", linewidth=0.9) +
+  geom_hline(yintercept=0, linetype="dashed", colour="grey55", linewidth=0.9) +
+  geom_point(size=5, stroke=1.2) +
+  annotate("text", x=0.18, y= 12, label="Fewer genes\nBUSCO improves",
+           size=3, colour="grey40", hjust=0) +
+  annotate("text", x=0.18, y=-12, label="Fewer genes\nBUSCO declines",
+           size=3, colour="grey40", hjust=0) +
+  annotate("text", x=2.8,  y= 12, label="More genes\nBUSCO improves",
+           size=3, colour="grey40", hjust=1) +
+  annotate("text", x=2.8,  y=-12, label="More genes\nBUSCO declines",
+           size=3, colour="grey40", hjust=1) +
+  scale_colour_manual(values=SP_COLS, name="Species") +
+  scale_shape_manual(values=pl_shapes, name="Pipeline") +
+  scale_x_log10(breaks=c(0.2,0.5,1,2,3), labels=label_number(),
+                limits=c(0.15,3.2)) +
+  labs(x="Gene count / reference gene count (log scale)",
+       y="Lineage BUSCO vs reference (percentage points)",
+       title="BUSCO change vs gene count change - focal species vs reference",
+       caption="Reference is the origin (0 pp, 1x). Each point = one (species, pipeline) pair.") +
+  ptm +
+  theme(axis.text.x=element_text(angle=0, hjust=0.5),
+        legend.position="right")
+
+p_delta
+save_plot(p_delta, "20_busco_vs_genecount_delta", w=12, h=7)
+```
+
+---
+
+# Session info
+
+```{r session-info}
+sessionInfo()
+```

@@ -1,0 +1,473 @@
+---
+title: "ProgressStat"
+author: "Jan Izquierdo"
+date: "2026-03-26"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE)
+```
+
+# read and load
+
+```{r readData}
+# Load only ggplot2 for plotting
+library(ggplot2)
+
+# Load data using base R
+#data<-read.csv("overview.tsv", stringsAsFactors=TRUE, na.strings="NA", sep="\t")
+data<-read.csv("../protist_table/protists.tsv", stringsAsFactors=TRUE, na.strings="", sep="\t")
+data<-read.csv("../protist_table/strain_protists.tsv", stringsAsFactors=TRUE, na.strings="", sep="\t")
+```
+
+```{r filterLongGenome}
+genomes_data<-data[!is.na(data$assembly_accession),]
+longread_genomes<-genomes_data[genomes_data$long.read_experiments>0,]
+
+#strains to species
+strain_list<-strsplit(trimws(data$species), "\\s+")
+#extract valid binomial names
+species_vectors <- lapply(strain_list, function(w) {
+  if (length(w) < 2) return(NULL) #only larger than 2(no group names(plasmodium))
+  
+  clean_epithet <- tolower(gsub("\\.$", "", w[2])) #remove .
+  if (clean_epithet %in% c("sp", "cf", "aff", "clade")) return(NULL) #remove indicators
+  
+  return(tolower(paste(w[1], w[2])))
+})
+
+#unlist, remove NULLs, count 
+allSpecies<-data.frame(Species=unique(unlist(species_vectors)))
+```
+
+#stats
+
+```{r}
+counts<-c(
+  "Protist strains in SRA"=nrow(data),
+  "Species"=nrow(allSpecies),
+  "Protist Assemblies"=sum(!is.na(data$assembly_accession)),
+  "Annotations"=sum(!is.na(data$annotation_accession)),
+  #"Strains with RNA-seq"=sum(!is.na(data$rnaseq_data)),
+  "Assemblies with
+  RNA-seq"=sum(!is.na(data$rnaseq_data) & !is.na(data$assembly_accession)),
+  #"Strains with long-read RNA-seq"=sum(data$long.read_experiments > 0, na.rm=TRUE),
+  "Assemblies with long-
+  read RNA-seq"=sum(data$long.read_experiments > 0 & !is.na(data$assembly_accession), na.rm=TRUE))
+
+plot_data<-data.frame(Category=factor(names(counts)), Count=as.numeric(counts))
+```
+
+```{r fig.width=30, fig.height=15}
+p<-ggplot(plot_data, aes(x=reorder(Category, -Count), y=Count, fill=Category)) +
+  geom_bar(stat="identity", show.legend=FALSE, color="black")+
+  geom_text(aes(label=scales::comma(Count)), vjust=-0.5, size=10)+
+  scale_fill_brewer(palette="Dark2")+
+  labs(x="", y="", title="Protist availability")+
+  theme_linedraw()+
+  theme(text=element_text(size=33, color="black"),
+        axis.text=element_text(color="black"),
+        axis.text.x=element_text(angle=45, hjust=1),
+        plot.title=element_text(hjust=0.5),
+        axis.ticks=element_line(color="black", linewidth=1.5),
+        panel.border=element_rect(color="black", fill=NA, linewidth=2),
+        #panel.grid.major=element_line(color="black", linewidth=0.8),
+        panel.grid.minor=element_line(color="black", linewidth=0.5),
+        panel.background=element_rect(fill="transparent"),
+        plot.background=element_rect(fill="transparent", color=NA))
+
+p
+ggsave("img/protist_availability-assemblies.png", p, width=30, height=20, dpi=400, bg="transparent")
+```
+
+```{r}
+data$genome_present<-ifelse(!is.na(data$assembly_accession), 1, 0)
+data$annotation_present<-ifelse(!is.na(data$annotation_accession), 1, 0)
+data$rnaseq_present<-ifelse(!is.na(data$rnaseq_data), 1, 0)
+data$longread_present<-ifelse(data$long.read_experiments>0, 1, 0)
+
+
+#View(data[data$longread_present==1,])
+```
+
+#short-long comparison
+
+```{r}
+counts<-c(
+  "Long-read RNA-seq"=sum(data$long.read_experiments > 0, na.rm=TRUE),
+  "Short-read RNA-seq"=sum(data$short.read_experiments > 0, na.rm=TRUE)
+  )
+
+plot_data<-data.frame(Category=factor(names(counts)), Count=as.numeric(counts))
+
+p<-ggplot(plot_data, aes(x=reorder(Category, -Count), y=Count, fill=Category)) +
+  geom_bar(stat="identity", show.legend=FALSE, color="black")+
+  geom_text(aes(label=scales::comma(Count)), vjust=-0.5, size=12)+
+  scale_fill_brewer(palette="Dark2")+
+  labs(x="", y="")+
+  theme_bw()+
+  theme(text=element_text(size=35, color="black"),
+        axis.text=element_text(color="black", size=40),
+        panel.border=element_rect(color="black", fill=NA, linewidth=2),
+        axis.ticks=element_line(color="black", linewidth=1.5),
+        anel.grid.major=element_line(color="black", linewidth=0.8),
+        panel.grid.minor=element_line(color="black", linewidth=0.5),
+        panel.background=element_rect(fill='transparent'),
+        plot.background=element_rect(fill='transparent', color=NA))
+ggsave("img/rnaseq.png", p, width=20, height=20, dpi=700, bg="transparent")
+```
+
+#metrics
+
+```{r user-input}
+# ── Edit these two variables ──────────────────────────────────────────────────
+tsv_path <- "overview.tsv"
+
+chosen_spp <- c(
+  "Cyanidioschyzon_merolae_strain_10D",
+  "Chlamydomonas_reinhardtii",
+  "Babesia_duncani",
+  "Emiliania_huxleyi_CCMP1516",
+  "Cyanidiococcus_yangmingshanensis",
+  "Hydrurus_foetidus",
+  "Chlorella_sorokiniana"
+)
+
+chosen_spp <- c(
+  "Hydrurus_foetidus", "Cyanidiococcus_yangmingshanensis", "Chlorella_sorokiniana", "Emiliania_huxleyi_CCMP1516", "Cyanidioschyzon_merolae_strain_10D"
+)
+# ─────────────────────────────────────────────────────────────────────────────
+```
+
+```{r load-and-filter}
+chosen_spp <- gsub("_", " ", chosen_spp)
+
+df_full <- read.delim(tsv_path, sep="\t", stringsAsFactors=FALSE,
+                      check.names=FALSE)
+
+df <- df_full[df_full$species %in% chosen_spp, ]
+
+missing <- setdiff(chosen_spp, unique(df$species))
+if (length(missing) > 0)
+  warning("Species not found and skipped: ", paste(missing, collapse=", "))
+if (nrow(df) == 0) stop("None of the requested species were found.")
+```
+
+```{r define-columns}
+# ── BUSCO scores (0–100 scale) ────────────────────────────────────────────────
+busco_cols <- c(
+  "reference_gen_busco_custom_lineage",
+  "reference_prot_busco_custom_lineage",
+  "reference_gen_busco_eukaryote",
+  "reference_prot_busco_eukaryote",
+  "isoquant_lineage_busco",
+  "isoquant_eukaryote_busco",
+  "lyric_lineage_busco_regular",
+  "lyric_eukaryote_busco_regular",
+  "lyric_lineage_busco_merged",
+  "lyric_eukaryote_busco_merged"
+)
+
+# ── Count columns (integers, log scale) ───────────────────────────────────────
+count_cols <- c(
+  "reference_gene_count",
+  "reference_transcript_count",
+  "isoquant_gene_count",
+  "isoquant_transcripts_count",
+  "lyric_gene_count_regular",
+  "lyric_transcript_count_regular",
+  "lyric_gene_count_merged",
+  "lyric_transcript_count_merged"
+)
+
+# Keep only columns that actually exist in the filtered data
+busco_cols <- intersect(busco_cols, colnames(df))
+count_cols <- intersect(count_cols, colnames(df))
+```
+
+```{r parse-factors}
+# ── Helper: derive tool / db_type / count_type from raw column names ──────────
+
+add_busco_factors <- function(d) {
+  d$tool <- ifelse(grepl("^reference", d$metric), "Reference",
+            ifelse(grepl("^isoquant",  d$metric), "IsoQuant",
+            ifelse(grepl("^lyric",     d$metric), "Lyric", "Other")))
+  d$db_type <- ifelse(grepl("lineage|custom_lineage", d$metric),
+                      "Lineage", "Eukaryote")
+  d$tool    <- factor(d$tool,    levels=c("Reference", "IsoQuant", "Lyric"))
+  d$db_type <- factor(d$db_type, levels=c("Lineage", "Eukaryote"))
+  d
+}
+
+add_count_factors <- function(d) {
+  d$tool <- ifelse(grepl("^reference", d$metric), "Reference",
+            ifelse(grepl("^isoquant",  d$metric), "IsoQuant",
+            ifelse(grepl("^lyric",     d$metric), "Lyric", "Other")))
+  d$count_type <- ifelse(grepl("gene", d$metric), "Gene", "Transcript")
+  d$tool       <- factor(d$tool,       levels=c("Reference", "IsoQuant", "Lyric"))
+  d$count_type <- factor(d$count_type, levels=c("Gene", "Transcript"))
+  d
+}
+
+# Alpha values: full opacity=solid category, half=secondary category
+ALPHA_BUSCO  <- c("Lineage"=1.0, "Eukaryote"=0.45)
+ALPHA_COUNTS <- c("Gene"   =1.0, "Transcript"=0.45)
+```
+
+---
+
+## BUSCO scores
+
+One panel per species; metrics run along the y-axis so all scores for a
+species are immediately comparable. The dashed line marks the 50 % midpoint.
+
+```{r busco-facet, fig.width=14, fig.height=10}
+df_busco <- reshape(df[, c("species", busco_cols)],
+                    varying  =busco_cols,
+                    v.names  ="score",
+                    timevar  ="metric",
+                    times    =busco_cols,
+                    direction="long")
+df_busco <- df_busco[!is.na(df_busco$score), ]
+df_busco <- add_busco_factors(df_busco)
+df_busco$metric <- gsub("_", " ", df_busco$metric)
+
+p_busco_all <- ggplot(df_busco, aes(x=score, y=reorder(metric, score),
+                     fill=tool, alpha=db_type)) +
+  geom_vline(xintercept=50, linetype="dashed", colour="grey60", linewidth=1.2) +
+  geom_col(colour="black", linewidth=0.5, width=0.7) +
+  geom_text(aes(label=round(score, 1)),
+            hjust=-0.15, size=6, colour="grey20", alpha=1) +
+  scale_x_continuous(limits=c(0, 115), breaks=seq(0, 100, 25)) +
+  scale_fill_brewer(palette="Set2", name="Tool") +
+  scale_alpha_manual(values=ALPHA_BUSCO, name="DB type",
+                     guide =guide_legend(override.aes=list(fill="grey50"))) +
+  facet_wrap(~ species, ncol=3, scales="free_y") +
+  labs(title="BUSCO Scores by Species", x="Score (%)", y=NULL) +
+  theme_bw(base_size=22) +
+  theme(
+    legend.position   ="top",
+    panel.grid.major.y=element_blank(),
+    panel.grid.minor  =element_blank(),
+    axis.text.y       =element_text(size=18),
+    strip.background  =element_rect(fill="transparent", colour="black"),
+    strip.text        =element_text(face="bold", size=20),
+    panel.border      =element_rect(colour="black", fill=NA, linewidth=2),
+    axis.ticks        =element_line(colour="black", linewidth=1.4),
+    panel.background  =element_rect(fill="transparent", colour=NA),
+    plot.background   =element_rect(fill="transparent", colour=NA),
+    legend.background =element_rect(fill="transparent", colour=NA),
+    legend.key        =element_rect(fill="transparent", colour=NA)
+  )
+
+p_busco_all
+ggsave("img/busco_all_species.png", p_busco_all,
+       width=28, height=20, dpi=700, bg="transparent")
+```
+
+---
+
+## Counts
+
+One panel per species on a log₁₀ scale; all count metrics for a species sit
+in the same panel for direct within-species comparison.
+
+```{r counts-facet, fig.width=14, fig.height=10}
+df_counts <- reshape(df[, c("species", count_cols)],
+                     varying  =count_cols,
+                     v.names  ="value",
+                     timevar  ="metric",
+                     times    =count_cols,
+                     direction="long")
+df_counts <- df_counts[!is.na(df_counts$value) & df_counts$value > 0, ]
+df_counts <- add_count_factors(df_counts)
+df_counts$metric <- gsub("_", " ", df_counts$metric)
+
+p_counts_all <- ggplot(df_counts, aes(x=value, y=reorder(metric, value),
+                      fill=tool, alpha=count_type)) +
+  geom_col(colour="black", linewidth=0.5, width=0.7) +
+  geom_text(aes(label=scales::comma(value)),
+            hjust=-0.1, size=6, colour="grey20", alpha=1) +
+  scale_x_log10(labels=scales::label_comma(),
+                expand =expansion(mult=c(0, 0.30))) +
+  scale_fill_brewer(palette="Set2", name="Tool") +
+  scale_alpha_manual(values=ALPHA_COUNTS, name="Count type",
+                     guide =guide_legend(override.aes=list(fill="grey50"))) +
+  facet_wrap(~ species, ncol=3, scales="free_y") +
+  labs(title="Gene & Transcript Counts by Species",
+       x="Count (log\u2081\u2080 scale)", y=NULL) +
+  theme_bw(base_size=22) +
+  theme(
+    legend.position   ="top",
+    panel.grid.major.y=element_blank(),
+    panel.grid.minor  =element_blank(),
+    axis.text.y       =element_text(size=18),
+    strip.background  =element_rect(fill="transparent", colour="black"),
+    strip.text        =element_text(face="bold", size=20),
+    panel.border      =element_rect(colour="black", fill=NA, linewidth=2),
+    axis.ticks        =element_line(colour="black", linewidth=1.4),
+    panel.background  =element_rect(fill="transparent", colour=NA),
+    plot.background   =element_rect(fill="transparent", colour=NA),
+    legend.background =element_rect(fill="transparent", colour=NA),
+    legend.key        =element_rect(fill="transparent", colour=NA)
+  )
+
+p_counts_all
+ggsave("img/counts_all_species.png", p_counts_all,
+       width=28, height=20, dpi=700, bg="transparent")
+```
+
+---
+
+## BUSCO heatmap
+
+Compact overview across all metrics and species at a glance.
+
+```{r busco-heatmap, fig.width=9, fig.height=5}
+df_heat <- reshape(df[, c("species", busco_cols)],
+                   varying  =busco_cols,
+                   v.names  ="score",
+                   timevar  ="metric",
+                   times    =busco_cols,
+                   direction="long")
+df_heat$metric <- gsub("_", " ", df_heat$metric)
+
+p_heatmap <- ggplot(df_heat, aes(x=metric, y=species, fill=score)) +
+  geom_tile(colour="white", linewidth=1.2) +
+  geom_text(aes(label=ifelse(is.na(score), "NA", round(score, 1))),
+            size=7, colour="grey20") +
+  scale_fill_gradientn(
+    colours =c("#d73027", "#fee08b", "#1a9850"),
+    values  =c(0, 0.5, 1),
+    limits  =c(0, 100),
+    na.value="grey90",
+    name    ="Score (%)"
+  ) +
+  labs(title="BUSCO Heatmap", x=NULL, y=NULL) +
+  theme_minimal(base_size=26) +
+  theme(
+    axis.text.x      =element_text(angle=30, hjust=1, size=22),
+    axis.text.y      =element_text(size=22),
+    panel.grid       =element_blank(),
+    panel.background =element_rect(fill="transparent", colour=NA),
+    plot.background  =element_rect(fill="transparent", colour=NA),
+    legend.background=element_rect(fill="transparent", colour=NA),
+    legend.key       =element_rect(fill="transparent", colour=NA)
+  )
+
+p_heatmap
+ggsave("img/busco_heatmap.png", p_heatmap,
+       width=22, height=12, dpi=700, bg="transparent")
+```
+
+
+---
+
+# per-species
+
+One page per species: a BUSCO plot and a counts plot printed separately so
+each species can be inspected in isolation.
+
+```{r helper-theme, include=FALSE}
+# Shared theme used by both plot types below
+spp_theme <- function() {
+  theme_bw(base_size=26) +
+  theme(
+    panel.grid.major.y =element_blank(),
+    panel.grid.minor   =element_blank(),
+    axis.text.y        =element_text(size=22),
+    panel.border       =element_rect(colour="black", fill=NA, linewidth=2),
+    axis.ticks         =element_line(colour="black", linewidth=1.4),
+    panel.background   =element_rect(fill="transparent", colour=NA),
+    plot.background    =element_rect(fill="transparent", colour=NA),
+    legend.background  =element_rect(fill="transparent", colour=NA),
+    legend.key         =element_rect(fill="transparent", colour=NA)
+  )
+}
+
+tool_fill <- scale_fill_brewer(palette="Set2")
+```
+
+```{r per-species-busco, fig.width=10, fig.height=5, results='asis'}
+# ── Prepare long BUSCO data ───────────────────────────────────────────────────
+df_busco_all <- reshape(df[, c("species", busco_cols)],
+                        varying  =busco_cols,
+                        v.names  ="score",
+                        timevar  ="metric",
+                        times    =busco_cols,
+                        direction="long")
+df_busco_all <- df_busco_all[!is.na(df_busco_all$score), ]
+df_busco_all <- add_busco_factors(df_busco_all)
+df_busco_all$metric <- gsub("_", " ", df_busco_all$metric)
+
+# ── One BUSCO plot per species ────────────────────────────────────────────────
+for (spp in unique(df$species)) {
+  d <- df_busco_all[df_busco_all$species == spp, ]
+  if (nrow(d) == 0) next
+
+  cat(sprintf("\n\n### %s\n\n", spp))
+
+  p <- ggplot(d, aes(x=score, y=reorder(metric, score),
+                     fill=tool, alpha=db_type)) +
+    geom_vline(xintercept=50, linetype="dashed",
+               colour="grey60", linewidth=1.2) +
+    geom_col(colour="black", linewidth=0.5, width=0.7) +
+    geom_text(aes(label=round(score, 1)),
+              hjust=-0.15, size=7, colour="grey20", alpha=1) +
+    scale_x_continuous(limits=c(0, 115), breaks=seq(0, 100, 25)) +
+    tool_fill +
+    scale_alpha_manual(values=ALPHA_BUSCO, name="DB type",
+                       guide =guide_legend(override.aes=list(fill="grey50"))) +
+    labs(title=paste("BUSCO Scores -", spp),
+         x="Score (%)", y=NULL, fill="Tool") +
+    spp_theme() +
+    theme(legend.position="top")
+
+  fname <- gsub(" ", "_", spp)
+  ggsave(paste0("img/busco_", fname, ".png"), p,
+         width=20, height=20, dpi=700, bg="transparent")
+  print(p)
+}
+```
+
+```{r per-species-counts, fig.width=10, fig.height=5, results='asis'}
+# ── Prepare long counts data ──────────────────────────────────────────────────
+df_counts_all <- reshape(df[, c("species", count_cols)],
+                         varying  =count_cols,
+                         v.names  ="value",
+                         timevar  ="metric",
+                         times    =count_cols,
+                         direction="long")
+df_counts_all <- df_counts_all[!is.na(df_counts_all$value) & df_counts_all$value > 0, ]
+df_counts_all <- add_count_factors(df_counts_all)
+df_counts_all$metric <- gsub("_", " ", df_counts_all$metric)
+
+# ── One counts plot per species ───────────────────────────────────────────────
+for (spp in unique(df$species)) {
+  d <- df_counts_all[df_counts_all$species == spp, ]
+  if (nrow(d) == 0) next
+
+  cat(sprintf("\n\n### %s\n\n", spp))
+
+  p <- ggplot(d, aes(x=value, y=reorder(metric, value),
+                     fill=tool, alpha=count_type)) +
+    geom_col(colour="black", linewidth=0.5, width=0.7) +
+    geom_text(aes(label=scales::comma(value)),
+              hjust=-0.1, size=7, colour="grey20", alpha=1) +
+    scale_x_log10(labels=scales::label_comma(),
+                  expand =expansion(mult=c(0, 0.30))) +
+    tool_fill +
+    scale_alpha_manual(values=ALPHA_COUNTS, name="Count type",
+                       guide =guide_legend(override.aes=list(fill="grey50"))) +
+    labs(title=paste("Counts -", spp),
+         x="Count (log10 scale)", y=NULL, fill="Tool") +
+    spp_theme() +
+    theme(legend.position="top")
+
+  fname <- gsub(" ", "_", spp)
+  ggsave(paste0("img/counts_", fname, ".png"), p,
+         width=20, height=20, dpi=700, bg="transparent")
+  print(p)
+}
+```
