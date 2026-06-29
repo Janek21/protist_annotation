@@ -7,7 +7,7 @@
       "description": "IsoQuant long-read assembly + annotation"
     },
     {
-      "name": "LyRic_annotator",
+      "name": "lyric_annotator",
       "url": "https://github.com/Janek21/LyRic_annotator.git",
       "branch": "main",
       "description": "LyRic wrapper; clones the LyRic engine (Janek21/LyRic_nonhuman) per run"
