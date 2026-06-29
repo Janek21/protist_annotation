@@ -39,9 +39,9 @@ echo "Species is $selected_specie"
 #export so protein_busco can read
 export SLURM_CPUS_PER_TASK
 
-bash protein_busco.sh $selected_specie
+bash scripts/protein_busco.sh $selected_specie
 echo "#################################################################################"
-bash genome_busco.sh $selected_specie
+bash scripts/genome_busco.sh $selected_specie
 
 rm agat_log*$selected_specie*
 

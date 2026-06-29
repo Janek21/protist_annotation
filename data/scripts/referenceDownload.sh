@@ -19,10 +19,11 @@
 #record start
 echo ">STARTING at $(date)"
 
-sp_out="species_ref"
+sp_out="species"
+taxlist="true_taxons.txt"
 
 #download annoations+available assembly
-annocli download --taxids-file true_taxons.csv --add-asm --fix-alias --output "$sp_out" --ref-only
+annocli download --taxids-file "$taxlist" --add-asm --fix-alias --output "$sp_out" --ref-only
 echo "annocli_done"
 #remove aliasNaming
 for dir in "$sp_out"/*/GC*/; do
@@ -53,7 +54,7 @@ for dir in "$sp_out"/*/GC*/; do
 done
 
 echo "python time"
-python3 scripts/seqGet.py true_taxons.csv -o "$sp_out"
+python3 scripts/seqGet.py "$taxlist" -o "$sp_out"
 
 #remove GCA if GCF anotation is available
 for folder in "$sp_out"/*/; do
@@ -77,10 +78,10 @@ for folder in "$sp_out"/*/; do
     fi
 done
 
-rm "$sp_out"/Durusdinium_trenchii* -rf
-rm "$sp_out"/Symbiodinium_natans* -rf
-rm "$sp_out"/Symbiodinium_necroappetens* -rf
-rm "$sp_out"/Brevolum_minutum* -rf
+#rm "$sp_out"/Durusdinium_trenchii* -rf
+#rm "$sp_out"/Symbiodinium_natans* -rf
+#rm "$sp_out"/Symbiodinium_necroappetens* -rf
+#rm "$sp_out"/Brevolum_minutum* -rf
 rm "$sp_out"/Cyanidioschyzon_merolae_strain_10d* -rf
 
 #record memory usage

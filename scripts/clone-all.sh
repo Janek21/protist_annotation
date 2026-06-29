@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Clone (or update) every engine listed in repos.json into the repo root.
-# The engines are independent repositories; this script only assembles them
-# side by side for local development.
+
+#Clone (or update) every engine listed in repos.json into the repo root.
+#the engines are independent repositories, this script assembles them side by side for local development
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -13,8 +13,7 @@ if [[ ! -f "$MANIFEST" ]]; then
   exit 1
 fi
 
-# Emit "name<TAB>url<TAB>branch" per repo, using jq when available and
-# falling back to python3 otherwise.
+#emit "name<TAB>url<TAB>branch" per repo, using jq when available and falling back to python3 otherwise.
 read_manifest() {
   if command -v jq >/dev/null 2>&1; then
     jq -r '.repos[] | [.name, .url, .branch] | @tsv' "$MANIFEST"

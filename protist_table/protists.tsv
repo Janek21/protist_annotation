@@ -103,7 +103,7 @@ Archaeplastida	Chlorophyta	Chlamydomonas asymmetrica	51683	GCA_001662385.1	59.0	
 Archaeplastida	Chlorophyta	Chlamydomonas eustigma	1157962	GCA_002335675.1	45.0	GCA_002335675.1	short-read only	0	0	1	32251678
 Archaeplastida	Chlorophyta	Chlamydomonas incerta	51695	GCA_016834605.1	66.0	GCA_016834605.1	short-read only	0	0	1	54722332
 Archaeplastida	Chlorophyta	Chlamydomonas pacifica	3298625	GCA_048987325.1	62.0		short-read only	0	0	4	581239816
-Archaeplastida	Chlorophyta	Chlamydomonas reinhardtii	3055	GCF_000002595.2	64.0	GCF_000002595.2	short-read, long-read	5	237806211	3484	149750877026
+Archaeplastida	Chlorophyta	Chlamydomonas reinhardtii	3055	GCF_000002595.2	64.0	GCF_000002595.2	short-read, long-read	5	237806211	3556	151930726010
 Archaeplastida	Chlorophyta	Chlamydomonas schloesseri	2026947	GCA_016834595.1	64.5	GCA_016834595.1	short-read only	0	0	2	214479858
 Archaeplastida	Chlorophyta	Chlamydomonas sp. 3112	2053600	GCA_004335865.1	63.0			0	0	0	0
 Archaeplastida	Chlorophyta	Chlamydomonas sp. 3222	2056388	GCA_004335795.1	63.0			0	0	0	0
@@ -129,7 +129,7 @@ Archaeplastida	Chlorophyta	Chlorella sp. MEM25	3472630	GCA_054051705.1	56.0		sho
 Archaeplastida	Chlorophyta	Chlorella sp. NIG-J1	3388571	GCA_054660675.1	67.0		short-read only	0	0	1	329829446
 Archaeplastida	Chlorophyta	Chlorella sp. UMT-B8	2692263	GCA_046056165.1	56.0			0	0	0	0
 Archaeplastida	Chlorophyta	Chlorella variabilis	554065	GCF_000147415.1	67.0	GCF_000147415.1	short-read only	0	0	19	800099656
-Archaeplastida	Chlorophyta	Chlorella vulgaris	3077	GCA_023343905.1	62.0	GCA_023343905.1	short-read only	0	0	214	9480459027
+Archaeplastida	Chlorophyta	Chlorella vulgaris	3077	GCA_023343905.1	62.0	GCA_023343905.1	short-read only	0	0	220	9721905037
 Archaeplastida	Chlorophyta	Chlorocystis dangeardii	2816969	GCA_032270465.1	57.5			0	0	0	0
 Archaeplastida	Chlorophyta	Chloroidium saccharophilum	3082	GCA_047655145.1	50.0		short-read only	0	0	6	421346726
 Archaeplastida	Chlorophyta	Chloroidium sp. CF	2056392	GCA_004335625.1	52.0			0	0	0	0
@@ -404,7 +404,7 @@ Archaeplastida	Rhodophyta	Porphyridium purpureum	35688	GCA_008690995.1	56.0	GCA_
 Archaeplastida	Rhodophyta	Pterothamnion heteromorphum	2991671	GCA_032358295.1	45.0			0	0	0	0
 Archaeplastida	Rhodophyta	Pyropia haitanensis	1262161	GCA_008729055.1	71.5		short-read, long-read	4	7293450	358	18416960745
 Archaeplastida	Rhodophyta	Pyropia vietnamensis	683352	GCA_042855435.1	65.0	GCA_042855435.1		0	0	0	0
-Archaeplastida	Rhodophyta	Pyropia yezoensis	2788	GCA_054658335.1	65.0		short-read, long-read	3	660250	329	17642271042
+Archaeplastida	Rhodophyta	Pyropia yezoensis	2788	GCA_054658335.1	65.0		short-read, long-read	3	660250	400	26511680592
 Archaeplastida	Rhodophyta	Rhodosorus marinus	101924	GCA_029953675.1	49.0	GCA_029953675.1	short-read only	0	0	4	432693033
 Archaeplastida	Rhodophyta	Rhodymenia pacifica	41701	GCA_032270325.1	40.5			0	0	0	0
 Archaeplastida	Rhodophyta	Sarcodiotheca gaudichaudii	31447	GCA_032355985.1	40.5			0	0	0	0
@@ -473,7 +473,7 @@ Discoba	Discoba	Leishmania gerbilli	40285	GCA_000443025.1	60.0			0	0	0	0
 Discoba	Discoba	Leishmania guyanensis	5670	GCA_024970365.1	58.0	GCA_024970365.1	short-read only	0	0	11	450689407
 Discoba	Discoba	Leishmania infantum	5671	GCA_003020905.1	59.5		short-read, long-read	4	24847352	83	4963421949
 Discoba	Discoba	Leishmania infantum JPCM5	435258	GCF_000002875.2	59.5	GCF_000002875.2	short-read only	0	0	9	814460204
-Discoba	Discoba	Leishmania lainsoni	5677	GCA_003664395.1	58.0		short-read only	0	0	18	516321002
+Discoba	Discoba	Leishmania lainsoni	5677	GCA_058218795.1	59.5		short-read only	0	0	18	516321002
 Discoba	Discoba	Leishmania lindenbergi	651832	GCA_040363675.1	57.5	GCA_040363675.1		0	0	0	0
 Discoba	Discoba	Leishmania major	5664	GCA_051013985.1	59.5		short-read only	0	0	179	13941351775
 Discoba	Discoba	Leishmania major strain Friedlin	347515	GCF_000002725.2	59.5	GCF_000002725.2	short-read only	0	0	10	537575881
@@ -587,7 +587,7 @@ Haptista	Haptista	Chrysochromulina tobinii	1460289	GCA_001275005.1	63.5	GCA_0012
 Haptista	Haptista	Chrysotila carterae	13221	GCA_054660715.1	58.0		short-read only	0	0	3	138971194
 Haptista	Haptista	Diacronema lutheri	2081491	GCA_019448385.1	73.5	GCA_019448385.1	short-read only	0	0	5	151700348
 Haptista	Haptista	Emiliania huxleyi CCMP1516	280463	GCF_000372725.1	65.5	GCF_000372725.1	short-read, long-read	76	460391143	42	2257798812
-Haptista	Haptista	Isochrysis galbana	37099	GCA_018136815.1	58.5		short-read, long-read	1	52412	30	2319547126
+Haptista	Haptista	Isochrysis galbana	37099	GCA_018136815.1	58.5		short-read, long-read	1	52412	46	3344214482
 Haptista	Haptista	Pavlovales sp. CCMP2436	483367	GCA_026770615.1	55.0	GCA_026770615.1		0	0	0	0
 Haptista	Haptista	Phaeocystis sp.	1907791	GCA_043251255.1	67.5			0	0	0	0
 Haptista	Haptista	Prymnesium parvum	97485	GCA_040529105.1	56.5		short-read only	0	0	53	7052896175
@@ -793,10 +793,11 @@ SAR	Alveolata	Perkinsus marinus	31276	GCA_978019715.1	47.5	GCA_978019715.1	short
 SAR	Alveolata	Perkinsus marinus ATCC 50983	423536	GCF_000006405.1	47.5	GCF_000006405.1	short-read only	0	0	114	3846133794
 SAR	Alveolata	Perkinsus olseni	32597	GCA_978019485.1	51.5	GCA_978019485.1	short-read only	0	0	6	707843054
 SAR	Alveolata	Perkinsus sp. BL_2016	2494336	GCA_004369235.1	45.5	GCA_004369235.1		0	0	0	0
-SAR	Alveolata	Plagiopyla frontata	35117	GCA_977017605.1	19.5		short-read only	0	0	5	201168646
+SAR	Alveolata	Plagiopyla frontata	35117	GCA_976925355.1	25.0		short-read only	0	0	5	201168646
 SAR	Alveolata	Plagiopyla sp. F26	3350321	GCA_977966335.1	24.5			0	0	0	0
 SAR	Alveolata	Plagiopyla sp. strain F1A	2980487	GCA_977018885.1	24.5		short-read only	0	0	1	102865866
 SAR	Alveolata	Plagiopyla sp. strain JUDRED	2980486	GCA_977017555.1	23.0		short-read only	0	0	1	121929776
+SAR	Alveolata	Plagiopyla sp. strain OYSTR	2980485	GCA_976927705.1	24.5		short-read only	0	0	1	99841310
 SAR	Alveolata	Plasmodium adleri (nom. inval.)	880535	GCF_900097015.1	18.5	GCF_900097015.1		0	0	0	0
 SAR	Alveolata	Plasmodium berghei	5821	GCA_900044335.1	22.0	GCA_900044335.1	short-read, long-read	1	359923	3337	39189190380
 SAR	Alveolata	Plasmodium berghei ANKA	5823	GCF_900002375.2	22.0	GCF_900002375.2	short-read only	0	0	125	15090089277
@@ -952,7 +953,6 @@ SAR	Rhizaria	Bonamia ostreae	126728	GCA_040357525.1	33.0	GCA_040357525.1	short-r
 SAR	Rhizaria	Cercozoa sp. M6MM	1215613	GCA_040357565.2	53.5	GCA_040357565.2	short-read only	0	0	1	42287588
 SAR	Rhizaria	Globobulimina sp.	2058621	GCA_003354225.1	34.5		short-read only	0	0	22	802261404
 SAR	Rhizaria	Haplosporidium nelsoni	31296	GCA_055256115.1	34.5			0	0	0	0
-SAR	Rhizaria	Haplosporidium pinnae	2057163	GCA_025330925.1	35.5			0	0	0	0
 SAR	Rhizaria	Marteilia pararefringens	2184066	GCA_039583845.1	31.0	GCA_039583845.1	short-read only	0	0	2	674379380
 SAR	Rhizaria	Mikrocytos mackini	195010	GCA_030180075.1	33.5		short-read only	0	0	1	92116708
 SAR	Rhizaria	Paramarteilia canceri	2844372	GCA_040357535.1	24.0	GCA_040357535.1		0	0	0	0
@@ -1020,6 +1020,7 @@ SAR	Stramenopiles	Chaetoceros sp.	49240	GCA_043251635.1	39.5		short-read only	0	
 SAR	Stramenopiles	Chaetoceros tenuissimus	426638	GCA_021927905.1	39.0	GCA_021927905.1	short-read only	0	0	79	2051292184
 SAR	Stramenopiles	Chlorellidium tetrabotrys	243652	GCA_032273165.1	42.5		short-read only	0	0	1	59317388
 SAR	Stramenopiles	Chloridella minuta	2991669	GCA_032273045.1	44.0			0	0	0	0
+SAR	Stramenopiles	Chordaria linearis	64904	GCA_964200645.2	54.0	GCA_964200645.2	short-read only	0	0	7	615417095
 SAR	Stramenopiles	Choristocarpus tenellus	116065	GCA_964200185.2	44.0	GCA_964200185.2	short-read only	0	0	1	181601048
 SAR	Stramenopiles	Chrysoparadoxa australica	2498842	GCA_964200425.2	52.0	GCA_964200425.2	short-read only	0	0	1	48250136
 SAR	Stramenopiles	Chrysophaeum taylorii	2483200	GCA_029834535.1	57.0	GCA_029834535.1		0	0	0	0
@@ -1039,19 +1040,28 @@ SAR	Stramenopiles	Cyclotella kingstonii	2794061	GCA_036939535.1	40.0			0	0	0	0
 SAR	Stramenopiles	Cylindrotheca closterium	2856	GCA_933822405.4	45.5	GCA_933822405.4	short-read, long-read	2	562779	84	4910994309
 SAR	Stramenopiles	Cylindrotheca fusiformis	2853	GCA_019693525.1	45.5			0	0	0	0
 SAR	Stramenopiles	Cymathaere triplicata	309354	GCA_035584555.1	39.5		short-read only	0	0	1	76743920
+SAR	Stramenopiles	Desmarestia dudresnayi	99931	GCA_964200505.2	48.0	GCA_964200505.2	short-read only	0	0	6	261873911
+SAR	Stramenopiles	Desmarestia herbacea	1205903	GCA_964200595.2	48.0	GCA_964200595.2	short-read only	0	0	12	568570889
 SAR	Stramenopiles	Detonula confervacea	83371	GCA_036939415.1	45.5		short-read only	0	0	3	159765264
 SAR	Stramenopiles	Dictyopteris delicatula	531973	GCA_047404155.1	49.0			0	0	0	0
+SAR	Stramenopiles	Dictyota dichotoma	2876	GCA_964200555.2	50.5	GCA_964200555.2	short-read only	0	0	38	2669968193
 SAR	Stramenopiles	Discosporangium mesarthrocarpum	376270	GCA_964200235.2	50.5	GCA_964200235.2	short-read only	0	0	1	138279016
 SAR	Stramenopiles	Discostella pseudostelligera	259834	GCA_036939915.2	47.0	GCA_036939915.2	short-read only	0	0	3	116353470
 SAR	Stramenopiles	Discostella stelligera	386076	GCA_036939735.1	46.5		short-read only	0	0	1	83972384
 SAR	Stramenopiles	Discostella stelligeroides	2934186	GCA_036939555.1	45.5		short-read only	0	0	1	71001508
-SAR	Stramenopiles	Ectocarpus fasciculatus	43935	GCA_964200205.2	53.0	GCA_964200205.2	short-read only	0	0	4	499549962
-SAR	Stramenopiles	Ectocarpus siliculosus	2880	GCA_000310025.1	53.5	GCA_000310025.1	short-read only	0	0	8	564461136
+SAR	Stramenopiles	Ectocarpus crouaniorum	690460	GCA_964200115.2	53.5	GCA_964200115.2	short-read only	0	0	2	247770382
+SAR	Stramenopiles	Ectocarpus fasciculatus	43935	GCA_964200285.2	53.5	GCA_964200285.2	short-read only	0	0	4	499549962
+SAR	Stramenopiles	Ectocarpus siliculosus	2880	GCA_964200065.2	53.5	GCA_964200065.2	short-read only	0	0	8	564461136
+SAR	Stramenopiles	Ectocarpus sp. 1 AP-2014	1535357	GCA_964200255.2	53.5	GCA_964200255.2	short-read only	0	0	3	362122282
 SAR	Stramenopiles	Ectocarpus sp. 12 AP-2014	1535356	GCA_964200265.2	53.5	GCA_964200265.2	short-read only	0	0	2	243769570
 SAR	Stramenopiles	Ectocarpus sp. 13 AM-2016	1904779	GCA_964200085.2	53.5	GCA_964200085.2	short-read only	0	0	1	112076734
+SAR	Stramenopiles	Ectocarpus sp. 2 AP-2014	1535358	GCA_964200095.2	53.5	GCA_964200095.2	short-read only	0	0	1	140512978
+SAR	Stramenopiles	Ectocarpus sp. 3 AP-2014	1535359	GCA_964200405.2	53.0	GCA_964200405.2	short-read only	0	0	2	239733948
 SAR	Stramenopiles	Ectocarpus sp. 4 AP-2014	1535360	GCA_964200485.2	53.5	GCA_964200485.2	short-read only	0	0	1	110650974
+SAR	Stramenopiles	Ectocarpus sp. 5 AP-2014	1535361	GCA_964200545.2	53.5	GCA_964200545.2	short-read only	0	0	2	199952654
 SAR	Stramenopiles	Ectocarpus sp. 6 AP-2014	1535362	GCA_964200375.2	53.5	GCA_964200375.2	short-read only	0	0	1	78376060
 SAR	Stramenopiles	Ectocarpus sp. 8 AP-2014	1535364	GCA_964200495.2	53.5	GCA_964200495.2	short-read only	0	0	1	114502528
+SAR	Stramenopiles	Ectocarpus sp. 9 AP-2014	1535365	GCA_964200305.2	53.5	GCA_964200305.2	short-read only	0	0	1	106777196
 SAR	Stramenopiles	Ectocarpus sp. CCAP 1310/34	867726	GCA_902602495.3	53.5	GCA_902602495.3		0	0	0	0
 SAR	Stramenopiles	Ectocarpus sp. Ec32	1768030	GCA_004764655.1	53.5		short-read only	0	0	29	2555020494
 SAR	Stramenopiles	Egregia menziesii	105409	GCA_035584435.1	43.0		short-read only	0	0	1	81036794
@@ -1065,6 +1075,8 @@ SAR	Stramenopiles	Epithemia catenata	2962568	GCA_964019935.2	42.5		short-read on
 SAR	Stramenopiles	Epithemia clementina (nom. ined.)	3042617	GCA_051400955.1	44.5	GCA_051400955.1	short-read only	0	0	22	3228891796
 SAR	Stramenopiles	Epithemia pelagica	2809013	GCA_946965045.2	48.0		short-read only	0	0	1	124163810
 SAR	Stramenopiles	Ericaria zosteroides	590117	GCA_965615335.1	46.0			0	0	0	0
+SAR	Stramenopiles	Eucampia zodiacus	444606	GCA_058382955.1	37.0			0	0	0	0
+SAR	Stramenopiles	Feldmannia mitchelliae	1964287	GCA_964200535.2	52.0	GCA_964200535.2	short-read only	0	0	3	392610056
 SAR	Stramenopiles	Fistulifera pelliculosa	913975	GCA_026008555.1	47.0			0	0	0	0
 SAR	Stramenopiles	Fistulifera solaris	1519565	GCA_030295235.1	46.0		short-read only	0	0	4	95151327
 SAR	Stramenopiles	Fragilaria crotonensis	210448	GCA_022925895.1	47.5	GCA_022925895.1	short-read only	0	0	6	368723196
@@ -1081,6 +1093,8 @@ SAR	Stramenopiles	Fragilariopsis sp. RCC5208	2302084	GCA_056151475.1	38.5			0	0	
 SAR	Stramenopiles	Fragilariopsis sp. RCC5325	2302088	GCA_056151455.1	38.5			0	0	0	0
 SAR	Stramenopiles	Fragilariopsis sp. RCC5501	2302102	GCA_056151425.1	38.5			0	0	0	0
 SAR	Stramenopiles	Fragilariopsis sp. RCC5511	2302105	GCA_056151395.1	38.5			0	0	0	0
+SAR	Stramenopiles	Fucus distichus	3012	GCA_964200245.2	48.0	GCA_964200245.2	short-read only	0	0	98	2241342806
+SAR	Stramenopiles	Fucus serratus	87148	GCA_964200575.2	48.5	GCA_964200575.2	short-read only	0	0	64	4675537793
 SAR	Stramenopiles	Globisporangium abappressorium	190219	GCA_023334355.1	53.5			0	0	0	0
 SAR	Stramenopiles	Globisporangium acanthophoron	2125992	GCA_023334365.1	61.0			0	0	0	0
 SAR	Stramenopiles	Globisporangium alternatum	2056925	GCA_023334315.1	55.0			0	0	0	0
@@ -1137,10 +1151,13 @@ SAR	Stramenopiles	Halamphora sp. MG8b	2056407	GCA_004335815.1	46.5			0	0	0	0
 SAR	Stramenopiles	Halocafeteria seosinensis	357350	GCA_057816405.1	47.0	GCA_057816405.1	short-read only	0	0	6	376459280
 SAR	Stramenopiles	Halophytophthora batemanensis	944602	GCA_023338225.1	58.0			0	0	0	0
 SAR	Stramenopiles	Halophytophthora polymorphica	758751	GCA_023338205.2	60.0			0	0	0	0
-SAR	Stramenopiles	Hapterophycus canaliculatus	2567908	GCA_964200335.2	54.5	GCA_964200335.2	short-read only	0	0	10	1187325770
+SAR	Stramenopiles	Halopteris paniculata	588760	GCA_964200445.2	48.5	GCA_964200445.2	short-read only	0	0	7	628071874
+SAR	Stramenopiles	Hapterophycus canaliculatus	2567908	GCA_964200565.2	55.0	GCA_964200565.2	short-read only	0	0	10	1187325770
+SAR	Stramenopiles	Heribaudiella fluviatilis	246117	GCA_964200625.2	51.5	GCA_964200625.2	short-read only	0	0	1	120995470
 SAR	Stramenopiles	Heterococcus sp. DN1	1140117	GCA_000498555.1	48.0			0	0	0	0
 SAR	Stramenopiles	Heterosigma akashiwo	2829	GCA_964200215.2	47.0	GCA_964200215.2	short-read, long-read	1	42211764	148	9501460832
 SAR	Stramenopiles	Heterotrichella gracilis	1497871	GCA_032358255.1	49.5			0	0	0	0
+SAR	Stramenopiles	Himanthalia elongata	74478	GCA_964200325.2	47.5	GCA_964200325.2	short-read only	0	0	1	189745996
 SAR	Stramenopiles	Hondaea fermentalgiana	2315210	GCA_014084085.1	57.0			0	0	0	0
 SAR	Stramenopiles	Hyaloperonospora arabidopsidis	272952	GCA_001414525.2	47.5		short-read only	0	0	24	1222066568
 SAR	Stramenopiles	Hyaloperonospora arabidopsidis Emoy2	559515	GCA_000173235.2	47.0			0	0	0	0
@@ -1156,13 +1173,16 @@ SAR	Stramenopiles	Laminaria digitata	80365	GCA_964200635.2	50.5	GCA_964200635.2	
 SAR	Stramenopiles	Laminaria ephemera	309364	GCA_036873875.1	47.0			0	0	0	0
 SAR	Stramenopiles	Laminaria setchellii	169769	GCA_037834435.1	49.5			0	0	0	0
 SAR	Stramenopiles	Laminaria sinclairii	169770	GCA_036873665.1	48.5			0	0	0	0
+SAR	Stramenopiles	Laminarionema elsbetiae	64929	GCA_964200145.2	52.5	GCA_964200145.2	short-read only	0	0	1	117404260
 SAR	Stramenopiles	Lessoniopsis littoralis	169788	GCA_040966315.1	47.5			0	0	0	0
 SAR	Stramenopiles	Licmophora abbreviata	297518	GCA_900291995.1	52.5			0	0	0	0
 SAR	Stramenopiles	Macrocystis pyrifera	35122	GCA_055697805.1	50.0		short-read only	0	0	89	5168664474
 SAR	Stramenopiles	Mayamaea pseudoterrestris	2872254	GCA_027923505.1	49.5	GCA_027923505.1	short-read only	0	0	7	8516180
 SAR	Stramenopiles	Mediolabrus comicus	2590921	GCA_036940125.2	44.0	GCA_036940125.2	short-read only	0	0	2	156666972
 SAR	Stramenopiles	Microchloropsis salina	2511165	GCA_051200715.1	55.0		short-read only	0	0	9	257089702
+SAR	Stramenopiles	Minidiscus variabilis	659878	GCA_984582945.1	40.5		short-read only	0	0	1	52247054
 SAR	Stramenopiles	Minutocellus sp. GHC0000111	3373538	GCA_977018835.1	52.0			0	0	0	0
+SAR	Stramenopiles	Myriotrichia clavaeformis	64930	GCA_964200515.2	54.0	GCA_964200515.2	short-read only	0	0	9	1078468454
 SAR	Stramenopiles	Nannochloropsis gaditana	72520	GCA_002838785.1	55.5		short-read only	0	0	44	1544303634
 SAR	Stramenopiles	Nannochloropsis gaditana CCMP526	1093141	GCF_000240725.1	54.5	GCF_000240725.1	short-read only	0	0	3	55884752
 SAR	Stramenopiles	Nannochloropsis granulata CCMP529	1259849	GCA_004335405.1	54.5			0	0	0	0
@@ -1199,13 +1219,14 @@ SAR	Stramenopiles	Parmales sp. scaly parma	2962637	GCA_030267985.1	51.5	GCA_0302
 SAR	Stramenopiles	Pelagomonas calceolata	35677	GCA_918797485.2	63.5	GCA_918797485.2	short-read only	0	0	157	4657171802
 SAR	Stramenopiles	Pelagomonas sp. RCC986	1606638	GCA_978041885.1	63.5			0	0	0	0
 SAR	Stramenopiles	Pelagophyceae sp. CCMP2097	483370	GCA_026770575.1	62.0	GCA_026770575.1		0	0	0	0
+SAR	Stramenopiles	Pelvetia canaliculata	74467	GCA_964200415.2	49.0	GCA_964200415.2	short-read only	0	0	4	302311980
 SAR	Stramenopiles	Peronosclerospora sorghi	230839	GCA_026184515.1	49.0	GCA_026184515.1	short-read only	0	0	1	669276296
 SAR	Stramenopiles	Peronospora belbahrii	622444	GCA_920618645.1	46.0	GCA_920618645.1	short-read only	0	0	9	448211480
 SAR	Stramenopiles	Peronospora destructor	86335	GCA_011800735.1	48.5		short-read only	0	0	4	3018850
 SAR	Stramenopiles	Peronospora effusa	542832	GCA_003704535.1	47.5	GCA_003704535.1	short-read only	0	0	5	831976032
 SAR	Stramenopiles	Peronospora farinosa	134698	GCA_947646735.1	48.0	GCA_947646735.1		0	0	0	0
 SAR	Stramenopiles	Peronospora tabacina	230439	GCA_002099245.1	48.0		short-read only	0	0	1	156493802
-SAR	Stramenopiles	Phaeodactylum tricornutum	2850	GCA_055434865.1	48.5		short-read, long-read	6	21680524	1485	57835803161
+SAR	Stramenopiles	Phaeodactylum tricornutum	2850	GCA_055434865.1	48.5		short-read, long-read	6	21680524	1541	61033341575
 SAR	Stramenopiles	Phaeodactylum tricornutum CCAP 1055/1	556484	GCF_000150955.2	49.0	GCF_000150955.2	short-read only	0	0	59	1381258110
 SAR	Stramenopiles	Phaeosaccion multiseriatum	2797544	GCA_965112735.1	58.5		short-read only	0	0	3	237095234
 SAR	Stramenopiles	Phaeostrophion irregulare	243268	GCA_046269665.1	42.0			0	0	0	0
@@ -1292,8 +1313,8 @@ SAR	Stramenopiles	Phytophthora quininea	134455	GCA_011947345.1	53.5			0	0	0	0
 SAR	Stramenopiles	Phytophthora ramorum	164328	GCF_020800215.1	54.5	GCF_020800215.1	short-read only	0	0	11	183452894
 SAR	Stramenopiles	Phytophthora rosacearum	244167	GCA_975902205.1	70.0			0	0	0	0
 SAR	Stramenopiles	Phytophthora rubi	129364	GCA_000687305.2	53.5		short-read only	0	0	14	1069447948
-SAR	Stramenopiles	Phytophthora sansomeana	555429	GCA_032158285.1	52.5			0	0	0	0
-SAR	Stramenopiles	Phytophthora sojae	67593	GCF_000149755.1	54.5	GCF_000149755.1	short-read only	0	0	133	7517515829
+SAR	Stramenopiles	Phytophthora sansomeana	555429	GCA_032158285.1	52.5		short-read only	0	0	66	2412936266
+SAR	Stramenopiles	Phytophthora sojae	67593	GCF_000149755.1	54.5	GCF_000149755.1	short-read only	0	0	153	8191656507
 SAR	Stramenopiles	Phytophthora sp. 'mugwort'	2116650	GCA_033558025.1	50.0			0	0	0	0
 SAR	Stramenopiles	Phytophthora sp. ST_20190627	2750334	GCA_014706145.1	51.0			0	0	0	0
 SAR	Stramenopiles	Phytophthora syringae	67594	GCA_012656105.1	52.5		short-read only	0	0	2	25598426
@@ -1328,9 +1349,11 @@ SAR	Stramenopiles	Pinguiococcus pyrenoidosus	172671	GCA_019677205.1	59.5		short-
 SAR	Stramenopiles	Plagiogrammopsis vanheurckii	1234821	GCA_978489235.1	50.5			0	0	0	0
 SAR	Stramenopiles	Plasmopara halstedii	4781	GCF_900000015.1	45.5	GCF_900000015.1	short-read only	0	0	60	3669989155
 SAR	Stramenopiles	Plasmopara muralis	1196443	GCA_003676415.1	44.5			0	0	0	0
-SAR	Stramenopiles	Plasmopara viticola	143451	GCA_001695595.3	45.0		short-read only	0	0	32	1802212559
+SAR	Stramenopiles	Plasmopara viticola	143451	GCA_001695595.3	45.0		short-read only	0	0	38	2773677551
+SAR	Stramenopiles	Pleurocladia lacustris	246121	GCA_964200135.2	52.0	GCA_964200135.2	short-read only	0	0	7	752707348
 SAR	Stramenopiles	Pleurophycus gardneri	309362	GCA_033042605.1	47.5		short-read only	0	0	1	83811824
 SAR	Stramenopiles	Porosira glacialis	49260	GCA_036939395.1	44.5		short-read only	0	0	1	70172818
+SAR	Stramenopiles	Porterinema fluviatile	246123	GCA_964200465.2	54.5	GCA_964200465.2	short-read only	0	0	7	774390140
 SAR	Stramenopiles	Postelsia palmaeformis	105414	GCA_037834295.1	50.0			0	0	0	0
 SAR	Stramenopiles	Poterioochromonas sp. DS	519425	GCA_015145745.1	40.5		short-read only	0	0	1	31644182
 SAR	Stramenopiles	Poteriospumella lacustris	1117027	GCA_008000375.1	53.0		short-read only	0	0	1	38702772
@@ -1339,7 +1362,7 @@ SAR	Stramenopiles	Psammodictyon sp. RCC7710	3451530	GCA_982586505.1	42.0			0	0	0
 SAR	Stramenopiles	Psammoneis japonica	517775	GCA_008632985.1	48.5		short-read only	0	0	1	46194340
 SAR	Stramenopiles	Pseudo-nitzschia delicatissima	44447	GCA_037355735.1	45.5		short-read, long-read	1	16219308	2	103063526
 SAR	Stramenopiles	Pseudo-nitzschia multiseries	37319	GCA_037355745.1	44.5		short-read, long-read	1	18998382	67	2448440402
-SAR	Stramenopiles	Pseudo-nitzschia multistriata	183589	GCA_900660405.1	46.5	GCA_900660405.1	short-read only	0	0	39	1187546526
+SAR	Stramenopiles	Pseudo-nitzschia multistriata	183589	GCA_058380785.1	46.0		short-read only	0	0	62	1981984809
 SAR	Stramenopiles	Pseudo-nitzschia pungens	37318	GCA_037355855.1	47.5		short-read, long-read	1	26845697	2	146264384
 SAR	Stramenopiles	Pseudo-nitzschia sp.	1804765	GCA_043251575.1	46.5		short-read only	0	0	1	242684164
 SAR	Stramenopiles	Pseudo-nitzschia sp. YHN1	3234127	GCA_057381285.1	44.5			0	0	0	0
@@ -1369,7 +1392,7 @@ SAR	Stramenopiles	Pythium grandisporangium	172234	GCA_023336285.1	55.0			0	0	0	0
 SAR	Stramenopiles	Pythium guiyangense	429562	GCA_003730235.1	58.5			0	0	0	0
 SAR	Stramenopiles	Pythium hydnosporum	4798	GCA_023336225.1	54.0			0	0	0	0
 SAR	Stramenopiles	Pythium inflatum	82938	GCA_023336345.1	57.0			0	0	0	0
-SAR	Stramenopiles	Pythium insidiosum	114742	GCA_022836835.1	57.0		short-read only	0	0	1	5681120
+SAR	Stramenopiles	Pythium insidiosum	114742	GCA_022836835.1	57.0		short-read only	0	0	4	22599853
 SAR	Stramenopiles	Pythium lycopersici	944636	GCA_023336105.1	54.0			0	0	0	0
 SAR	Stramenopiles	Pythium monospermum	92964	GCA_023336165.1	53.0			0	0	0	0
 SAR	Stramenopiles	Pythium myriotylum	82941	GCA_023091665.1	55.0		short-read only	0	0	33	1643103591
@@ -1394,9 +1417,11 @@ SAR	Stramenopiles	Pythium utonaiense	1588901	GCA_023334595.1	56.5			0	0	0	0
 SAR	Stramenopiles	Pythium vanterpoolii	82951	GCA_023334535.1	55.0			0	0	0	0
 SAR	Stramenopiles	Pythium volutum	82953	GCA_023334575.1	56.0			0	0	0	0
 SAR	Stramenopiles	Saccharina japonica	88149	GCA_048937375.1	50.0		short-read only	0	0	229	12435724377
-SAR	Stramenopiles	Saccharina latissima	309358	GCA_034768055.1	49.5		short-read only	0	0	385	17762066585
+SAR	Stramenopiles	Saccharina latissima	309358	GCA_964200175.2	50.0	GCA_964200175.2	short-read only	0	0	385	17762066585
 SAR	Stramenopiles	Saccharina sculpera	416830	GCA_052056835.1	49.5		short-read only	0	0	2	83267248
 SAR	Stramenopiles	Saccharina sessilis	416828	GCA_032270885.1	47.0			0	0	0	0
+SAR	Stramenopiles	Saccorhiza dermatodea	66620	GCA_964200355.2	50.5	GCA_964200355.2	short-read only	0	0	2	118794292
+SAR	Stramenopiles	Saccorhiza polyschides	45365	GCA_964200605.2	50.0	GCA_964200605.2	short-read only	0	0	16	1320641619
 SAR	Stramenopiles	Salisapilia sapeloensis	983660	GCA_023334545.1	48.0		short-read only	0	0	9	625999792
 SAR	Stramenopiles	Saprolegnia diclina VS20	1156394	GCF_000281045.1	58.5	GCF_000281045.1	short-read only	0	0	3	162987624
 SAR	Stramenopiles	Saprolegnia parasitica CBS 223.65	695850	GCF_000151545.1	58.5	GCF_000151545.1	short-read only	0	0	7	76785486
@@ -1407,9 +1432,10 @@ SAR	Stramenopiles	Sargassum platycarpum	143166	GCA_046270705.1	38.0			0	0	0	0
 SAR	Stramenopiles	Sargassum wightii	1442163	GCA_978015465.1	50.0			0	0	0	0
 SAR	Stramenopiles	Schizochytrium sp. CCTCC M209059	1573607	GCA_000818945.1	56.5		short-read only	0	0	4	47554747
 SAR	Stramenopiles	Schizochytrium sp. TIO01	559965	GCA_004764695.1	45.0		short-read only	0	0	2	56204416
+SAR	Stramenopiles	Schizocladia ischiensis	196139	GCA_964200225.2	57.0	GCA_964200225.2	short-read only	0	0	5	329294908
 SAR	Stramenopiles	Sclerospora graminicola	162130	GCA_001887855.2	47.5		short-read only	0	0	1	31946226
 SAR	Stramenopiles	Scytosiphon lomentaria	27967	GCA_047748095.1	37.0		short-read only	0	0	32	2466049948
-SAR	Stramenopiles	Scytosiphon promiscuus	1403536	GCA_964200315.2	53.5	GCA_964200315.2	short-read only	0	0	47	3802965461
+SAR	Stramenopiles	Scytosiphon promiscuus	1403536	GCA_964200365.2	54.5	GCA_964200365.2	short-read only	0	0	47	3802965461
 SAR	Stramenopiles	Seminavis robusta	568900	GCA_903772945.1	48.5	GCA_903772945.1	short-read only	0	0	233	14818806216
 SAR	Stramenopiles	Shionodiscus oestrupii	1048530	GCA_036939715.1	50.0			0	0	0	0
 SAR	Stramenopiles	Skeletonema costatum	2843	GCA_046619385.1	45.5		short-read only	0	0	88	3291049726
@@ -1418,9 +1444,10 @@ SAR	Stramenopiles	Skeletonema grethae	267565	GCA_036939775.1	45.0		short-read on
 SAR	Stramenopiles	Skeletonema marinoi	267567	GCA_030544225.1	45.5		short-read only	0	0	251	10879562854
 SAR	Stramenopiles	Skeletonema menzelii	216823	GCA_036940005.2	45.0	GCA_036940005.2	short-read only	0	0	3	191833162
 SAR	Stramenopiles	Skeletonema potamos	1429247	GCA_036940105.2	44.5	GCA_036940105.2	short-read only	0	0	1	12730708
-SAR	Stramenopiles	Skeletonema sp.	1907792	GCA_043251535.1	44.5			0	0	0	0
+SAR	Stramenopiles	Skeletonema sp.	1907792	GCA_043251535.1	44.5		short-read only	0	0	18	996196152
 SAR	Stramenopiles	Skeletonema tropicum	267982	GCA_037178625.1	45.0		short-read only	0	0	1	69501386
 SAR	Stramenopiles	Sphacelaria rigidula	117516	GCA_964200075.2	50.0	GCA_964200075.2	short-read only	0	0	16	1867234378
+SAR	Stramenopiles	Sphaerotrichia firma	2841634	GCA_964200055.2	55.0	GCA_964200055.2	short-read only	0	0	12	1331352488
 SAR	Stramenopiles	Stephanocyclus meneghinianus	29205	GCA_036940045.2	41.0	GCA_036940045.2	short-read only	0	0	15	762747188
 SAR	Stramenopiles	Stephanodiscus minutulus	222884	GCA_036939435.1	51.5		short-read only	0	0	1	82991828
 SAR	Stramenopiles	Stephanodiscus triporus	2934178	GCA_036939755.2	50.0	GCA_036939755.2	short-read only	0	0	1	11046430

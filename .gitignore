@@ -1,4 +1,5 @@
 # Engine repositories cloned by scripts/clone-all.sh (tracked via repos.json).
-/isoquant_annotator/
-/LyRic_annotator/
-/geneid-training/
+isoquant_annotator/
+LyRic_annotator/
+geneid-training/
+__pycache__/

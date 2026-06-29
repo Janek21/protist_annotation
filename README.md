@@ -19,8 +19,8 @@ This is a lightweight **glue repository**: it holds the shared data and analysis
 
 Engine repositories:
 
-- [isoquant_annotator](https://github.com/Janek21/isoquant_annotator) — IsoQuant long-read assembly + annotation
-- [LyRic_annotator](https://github.com/Janek21/LyRic_annotator) — LyRic wrapper; clones the LyRic engine ([LyRic_nonhuman](https://github.com/Janek21/LyRic_nonhuman)) per run
+- [isoquant_annotator](https://github.com/Janek21/isoquant_annotator) — IsoQuant long-read assembly + annotation guided
+- [LyRic_annotator](https://github.com/Janek21/LyRic_annotator) — LyRic wrapper: long-read assembly + annotation unguided
 - [geneid-training](https://github.com/Janek21/geneid-training) — geneid train, predict, and AGAT merge
 
 ```
@@ -41,17 +41,56 @@ The shared directories (`data/`, `busco_references/`, `protist_table/`, `result_
 
 ## Setup
 
+### Engine setup
+
 ```bash
-git clone https://github.com/Janek21/<this-repo>.git repo
-cd repo
+git clone https://github.com/Janek21/<this-repo>.git protist_annotation
+cd protist_annotation
 bash scripts/clone-all.sh
 ```
 
-`clone-all.sh` reads `repos.json` and clones each engine into `repo/` at the top level, or updates it if already present.
+`clone-all.sh` reads `repos.json` and clones each engine into `protist_annotation/` at the top level, or updates it if already present.
+
+### Species setup
+
+```bash
+bash scripts/tables_setup.sh
+cd data
+
+#download species
+sbatch referenceDownload.sh
+
+#rename directory taxids to match the table
+python scripts/rename_to_longread_taxid.py --species-dir species --longread longread_protists.tsv --apply
+```
+
+All strains that currently present an assembly and long-read RNA-seq data are downloaded to `data/species`.
+
+#### Evaluation of gathered species
+
+Gather the list of downloaded species names(without the taxid):
+```bash
+cd busco_references
+ls data/species/| sed 's/_[0-9]\+$//' > busco_references/dataspecie.txt
+```
+
+Adapt `busco_references/turbo.sh` to the list of species; the array number has to reflect the amount of species in busco_references/dataspecie.txt
+```bash
+wc -l dataspecie.txt
+
+#modify turbo.sh array number
+sbatch turbo.sh
+```
+_If the goal is to evaluate only 1 specie use `busco_references/monoSpecie.sh` instead of `busco_references/turbo.sh`_
+
+
 
 ## Dataset
 
-64 protist species with public long-read RNA-seq in the NCBI SRA (354 accessions, Oxford Nanopore and PacBio), spanning diverse protist lineages.
+All available(65 currently) protist species with public long-read RNA-seq in the NCBI SRA (currently 354 accessions, Oxford Nanopore and PacBio), spanning diverse protist lineages.
+
+## Result collection
+
 
 ## License
 
