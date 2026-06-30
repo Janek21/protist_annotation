@@ -36,10 +36,9 @@ Sources (relative to the projects root, all optional - missing ones are skipped)
                  unified table (regular+merged, columns suffixed _regular/_merged);
                  when this file exists it REPLACES the two separate lyric tables
   geneid_<flav>  geneid-training/results/summary/<flav>/general_summary.tsv
-                 flav in {regular, refined, merged}
+                 flav in {regular, merged}
                  key: <Genus_species[_strain]>_<taxid>
-                 counts + pivoted BUSCO (own/git lineage and eukaryote completeness;
-                 refined has counts only since no BUSCO is run for that flavour)
+                 counts + pivoted BUSCO (own/git lineage and eukaryote completeness)
 
 Matching strategy (per source row, first hit wins)
   1. exact TaxID  (only when the source key carries a trailing _<digits>)
@@ -485,7 +484,7 @@ def main():
                         help="unified LyRic table; when present it replaces --lyric and --lyric-merged")
     parser.add_argument("--geneid-results", default=os.path.join(ROOT, "geneid-training", "results"),
                         help="geneid results dir; reads summary/<flavour>/counts_summary.tsv")
-    parser.add_argument("--geneid-flavours", nargs="+", default=["regular", "refined", "merged"])
+    parser.add_argument("--geneid-flavours", nargs="+", default=["regular", "merged"])
     parser.add_argument("--lyric-mode", choices=["separate", "joint"], default="separate",
                         help="which LyRic table(s) to use/generate when no joint table exists yet")
     parser.add_argument("--skip", nargs="+", default=[], choices=SECTIONS, metavar="SECTION",

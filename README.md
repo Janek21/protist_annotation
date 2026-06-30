@@ -25,16 +25,17 @@ Engine repositories:
 
 ```
 repo/
-  README.md              this file
-  repos.json             manifest of the engine repositories
-  scripts/clone-all.sh   clones/updates every engine into this directory
-  data/                  acquire long-read RNA-seq (ENA) + genomes (NCBI); species tables
-  busco_references/      BUSCO baselines for reference genomes + shared taxonomy utilities
-  protist_table/         protist species survey
-  result_analytics/      aggregate per-engine metrics, compare, and report
-  isoquant_annotator/    cloned engine (not tracked here)
-  LyRic_annotator/       cloned engine (not tracked here)
-  geneid-training/       cloned engine (not tracked here)
+  README.md                this file
+  repos.json               manifest of the engine repositories
+  scripts/clone-all.sh     clones/updates every engine into this directory
+  scripts/tables_setup.sh   obtains all current available protist data by strain and saves in data/
+  data/                   acquire long-read RNA-seq (ENA) + genomes (NCBI); species tables
+  busco_references/        BUSCO baselines for reference genomes + shared taxonomy utilities
+  protist_table/           protist species survey
+  result_analytics/        aggregate per-engine metrics, compare, and report
+  isoquant_annotator/      cloned engine (not tracked here)
+  LyRic_annotator/         cloned engine (not tracked here)
+  geneid-training/         cloned engine (not tracked here)
 ```
 
 The shared directories (`data/`, `busco_references/`, `protist_table/`, `result_analytics/`) are part of this repository. The engine directories are cloned on demand and ignored by Git, so they stay independent and the glue repo only records which commit each engine should be at, via the manifest.
@@ -58,7 +59,7 @@ bash scripts/tables_setup.sh
 cd data
 
 #download species
-sbatch referenceDownload.sh
+sbatch scripts/referenceDownload.sh
 
 #rename directory taxids to match the table
 python scripts/rename_to_longread_taxid.py --species-dir species --longread longread_protists.tsv --apply
@@ -70,8 +71,8 @@ All strains that currently present an assembly and long-read RNA-seq data are do
 
 Gather the list of downloaded species names(without the taxid):
 ```bash
-cd busco_references
 ls data/species/| sed 's/_[0-9]\+$//' > busco_references/dataspecie.txt
+cd busco_references
 ```
 
 Adapt `busco_references/turbo.sh` to the list of species; the array number has to reflect the amount of species in busco_references/dataspecie.txt
@@ -91,6 +92,7 @@ All available(65 currently) protist species with public long-read RNA-seq in the
 
 ## Result collection
 
+python result_analytics/build_results_table.py --html --out result_analytics/overview.tsv
 
 ## License
 

@@ -6,6 +6,7 @@ import sys
 import re
 import json
 import argparse
+import gzip
 
 def download_genome_for_taxid(taxid, output_root):
     taxid_str = str(taxid).strip()
@@ -74,7 +75,10 @@ def download_genome_for_taxid(taxid, output_root):
     full_base_path = os.path.join(output_root, base_folder_name)
     assembly_folder = os.path.join(full_base_path, accession)
     
-    if os.path.exists(assembly_folder) and any(f.endswith('.fna') for f in os.listdir(assembly_folder)):
+    # Check for existing assembly, including gzip-compressed FASTA files
+    if os.path.exists(assembly_folder) and any(
+        f.endswith('.fna') or f.endswith('.fna.gz') for f in os.listdir(assembly_folder)
+    ):
         print(f"[{taxid}] Assembly already exists. Skipping.")
         return
 
@@ -91,13 +95,13 @@ def download_genome_for_taxid(taxid, output_root):
         print(f"[{taxid}] Downloading...")
         subprocess.run(cmd_download, capture_output=True, text=True, check=True)
         
-        # 6. Extraction
+        # 6. Extraction (write FASTA files directly as gzip-compressed .fna.gz)
         with zipfile.ZipFile(zip_filepath, 'r') as z:
             fasta_files = [f for f in z.namelist() if f.endswith('.fna')]
             for fasta_file in fasta_files:
-                filename = os.path.basename(fasta_file)
+                filename = os.path.basename(fasta_file) + ".gz"
                 target_path = os.path.join(assembly_folder, filename)
-                with z.open(fasta_file) as source, open(target_path, "wb") as target:
+                with z.open(fasta_file) as source, gzip.open(target_path, "wb") as target:
                     shutil.copyfileobj(source, target)
         
         os.remove(zip_filepath)

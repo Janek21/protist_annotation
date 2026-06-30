@@ -3,7 +3,8 @@
 #clear folder
 rm protist_table/*html
 rm protist_table/*tsv
-rm protist_table/*txt
+rm data/*txt
+rm data/*tsv
 
 #Protist tables
 python protist_table/protist_survey.py --email luejbpvzbzmvbqwnfb@gonrr.net --api-key $NCBI_API_KEY --html -o protist_table/strain_protists.tsv --no-assemblies-only
