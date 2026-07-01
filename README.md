@@ -15,7 +15,7 @@ Most ab initio predictors are trained on a few model organisms, so they annotate
 
 ## How this repository is organized
 
-This is a lightweight **glue repository**: it holds the shared data and analysis directly and links to the annotation engines, but it does not contain their code. Each engine lives in its own independent GitHub repository, listed in [`repos.json`](repos.json) and pulled in by [`scripts/clone-all.sh`](scripts/clone-all.sh) for local development. They share data through the filesystem (genomes and the species table under `data/`) rather than by importing each other's code.
+This is a lightweight **glue repository**: it holds the shared data and analysis directly and links to the annotation engines, but it does not contain their code. Each engine lives in its own independent GitHub repository, listed in [`engines.json`](engines.json) and pulled in by [`scripts/clone-all.sh`](scripts/clone-all.sh) for local development. They share data through the filesystem (genomes and the species table under `data/`) rather than by importing each other's code.
 
 Engine repositories:
 
@@ -24,9 +24,9 @@ Engine repositories:
 - [geneid-training](https://github.com/Janek21/geneid-training) — geneid train, predict, and AGAT merge
 
 ```
-repo/
+parent/
   README.md                this file
-  repos.json               manifest of the engine repositories
+  engines.json               manifest of the engine repositories
   scripts/clone-all.sh     clones/updates every engine into this directory
   scripts/tables_setup.sh   obtains all current available protist data by strain and saves in data/
   data/                   acquire long-read RNA-seq (ENA) + genomes (NCBI); species tables
@@ -50,7 +50,7 @@ cd protist_annotation
 bash scripts/clone-all.sh
 ```
 
-`clone-all.sh` reads `repos.json` and clones each engine into `protist_annotation/` at the top level, or updates it if already present.
+`clone-all.sh` reads `engines.json` and clones each engine into `protist_annotation/` at the top level, or updates it if already present.
 
 ### Species setup
 
@@ -85,14 +85,29 @@ sbatch turbo.sh
 _If the goal is to evaluate only 1 specie use `busco_references/monoSpecie.sh` instead of `busco_references/turbo.sh`_
 
 
-
 ## Dataset
 
-All available(65 currently) protist species with public long-read RNA-seq in the NCBI SRA (currently 354 accessions, Oxford Nanopore and PacBio), spanning diverse protist lineages.
+All available(65 currently) protist species with public long-read RNA-seq in the NCBI SRA (currently 354 accessions, Oxford Nanopore and PacBio), spanning diverse protist lineages. The current state of protist strain annotation can be visualized in the [strains](protist_table/strain_protists.html) and [accessions](protist_table/protists.html) tables.
+
+## Annotation production
+
+The annotation engines are designed to be run LyRic>Isoquant>geneid as Isoquant can reuse the raw data from LyRic and geneid is a final refination process.
+
+For running each engine you can find the instructions in their respective README, some cases might require a species list, for those cases use the generated `busco_references/dataspecie.txt`.
+```bash
+cp busco_references/dataspecie.txt *annotator
+```
 
 ## Result collection
 
-python result_analytics/build_results_table.py --html --out result_analytics/overview.tsv
+Once all annotation engines have been run the results can be collected into one [general table](result_analytics/overview.html) by:
+
+ ```bash
+ python result_analytics/build_results_table.py --html --out result_analytics/overview.tsv
+
+ #the busco stats(.png) can be gathered with
+ python result_analytics/collect_busco_summaries.py --refresh
+ ```
 
 ## License
 

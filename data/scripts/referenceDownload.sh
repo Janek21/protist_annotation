@@ -53,6 +53,10 @@ for dir in "$sp_out"/*/GC*/; do
     fi
 done
 
+mv species/Phaeodactylum_tricornutum_CCAP_1055/1_556484/GCF* species/Phaeodactylum_tricornutum_CCAP_1055/
+rm -rf species/Phaeodactylum_tricornutum_CCAP_1055/1_556484
+mv species/Phaeodactylum_tricornutum_CCAP_1055/ species/Phaeodactylum_tricornutum_CCAP_2850
+
 echo "python time"
 python3 scripts/seqGet.py "$taxlist" -o "$sp_out"
 
